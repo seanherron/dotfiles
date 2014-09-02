@@ -33,6 +33,8 @@ function prompt_sorin_precmd {
   if (( $+functions[git-info] )); then
     git-info
   fi
+  # Get Virtualenv Info
+  python-info
 }
 
 function prompt_sorin_setup {
@@ -71,9 +73,12 @@ function prompt_sorin_setup {
     'prompt' ' %F{blue}git%f$(coalesce "%b" "%p" "%c")%s' \
     'rprompt' '%A%B%S%a%d%m%r%U%u'
 
+  # %v - virtualenv name
+  zstyle ':prezto:module:python:info:virtualenv' format '(%v)'
+
   # Define prompts.
-  PROMPT='%F{cyan}${_prompt_sorin_pwd}%f${git_info:+${(e)git_info[prompt]}}%(!. %B%F{red}#%f%b.)${editor_info[keymap]} '
-  RPROMPT='${editor_info[overwrite]}%(?:: %F{red}⏎%f)${VIM:+" %B%F{green}V%f%b"}${git_info[rprompt]}'
+  PROMPT='%F{cyan}${_prompt_sorin_pwd}%f %F{blue}$python_info[virtualenv]%f%(!. %B%F{red}#%f%b.)${editor_info[keymap]} '
+  RPROMPT='${editor_info[overwrite]}%(?:: %F{red}⏎%f)${VIM:+" %B%F{green}V%f%b"}${git_info[rprompt]}${git_info:+${(e)git_info[prompt]}}'
   SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 }
 
