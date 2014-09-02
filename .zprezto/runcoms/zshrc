@@ -12,3 +12,6 @@ fi
 
 # Customize to your needs...
 
+# Set sane defaults for Cask
+export HOMEBREW_CASK_OPTS="--appdir=/Applications"
+

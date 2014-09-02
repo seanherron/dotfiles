@@ -26,6 +26,7 @@ function doIt() {
 	chsh -s /bin/zsh
 	zpreztoDestroy;
 	unset zpreztoDestroy;
+	. ~/.zshrc
 }
 
 read "brave?This may overwrite existing files in your home directory. Are you sure? (y/n) "

@@ -1,0 +1,14 @@
+# Install native apps
+# Usage: `brew bundle Caskfile`
+
+install caskroom/cask/brew-cask
+tap caskroom/versions
+
+cask install google-chrome
+cask install sublime-text3
+cask install gpgtools
+cask install spectacle
+cask install evernote
+cask install vagrant
+cask install virtualbox
+cask install slack
