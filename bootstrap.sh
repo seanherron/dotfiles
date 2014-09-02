@@ -9,18 +9,28 @@ function zpreztoInit {
 	done
 }
 
+function zpreztoDestroy {
+	rm -f .zlogin
+	rm -f .zlogout
+	rm -f .zpreztorc
+	rm -f .zshenv
+	rm -f .zshrc
+	rm -f .zprofile
+}
+
 function doIt() {
 	zpreztoInit;
 	unset zpreztoInit;
 	rsync --exclude ".git/" --exclude ".DS_Store" --exclude "bootstrap.sh" \
 		--exclude "README.md" -avh --no-perms . ~;
-	zsh
 	chsh -s /bin/zsh
+	zpreztoDestroy;
+	unset zpreztoDestroy;
 }
 
-read -p "This may overwrite existing files in your home directory. Are you sure? (y/n) " -n 1;
+read "brave?This may overwrite existing files in your home directory. Are you sure? (y/n) "
 echo "";
-if [[ $REPLY =~ ^[Yy]$ ]]; then
+if [[ $brave =~ ^[Yy]$ ]]; then
 	doIt;
 fi;
 
