@@ -15,3 +15,7 @@ fi
 # Set sane defaults for Cask
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 
+# Some basic defaults for Mac
+export ARCHFLAGS="-arch x86_64"
+# Ensure user bins take precedence
+export PATH=/usr/local/bin:$PATH
