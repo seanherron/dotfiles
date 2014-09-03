@@ -1,14 +1,40 @@
-# Install native apps
-# Usage: `brew bundle Caskfile`
+brew install caskroom/cask/brew-cask
+brew tap caskroom/versions
+brew tap caskroom/fonts 
 
-install caskroom/cask/brew-cask
-tap caskroom/versions
+function installcask() {
+	brew cask install "${@}" 2> /dev/null
+}
 
-cask install google-chrome
-cask install sublime-text3
-cask install gpgtools
-cask install spectacle
-cask install evernote
-cask install vagrant
-cask install virtualbox
-cask install slack
+installcask google-chrome
+installcask install sublime-text3
+installcask gpgtools
+installcask spectacle
+installcask evernote
+installcask vagrant
+installcask virtualbox
+installcask slack
+
+###############################################################################
+# Fonts!                                                            #
+###############################################################################
+installcask font-source-code-pro
+installcask font-source-sans-pro
+installcask font-source-serif-pro
+
+
+
+
+###############################################################################
+# Sublime Text                                                                #
+###############################################################################
+echo "Setting up Sublime Text 3"
+
+mkdir ~/Library/Application\ Support/Sublime\ Text\ 3/Installed\ Packages
+wget -O ~/Library/Application\ Support/Sublime\ Text\ 3/Installed\ Packages/Package\ Control.sublime-package https://sublime.wbond.net/Package%20Control.sublime-package
+
+# Install Sublime Text settings
+cp -r ~/.sublime ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User/Preferences.sublime-settings
+
+# Install Sublime Text Package Control
+cp -r ~/.sublime-packages ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User/Package\ Control.sublime-settings

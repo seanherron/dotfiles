@@ -1,0 +1,8 @@
+{
+    "installed_packages": [
+        "base16",
+        "Highlight",
+        "Pretty JSON",
+        "SFTP"
+    ]
+}
