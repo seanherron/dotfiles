@@ -30,5 +30,7 @@ install nmap
 install tree
 install webkit2png
 
+# Python Setup
+
 # Remove outdated versions from the cellar
 cleanup
