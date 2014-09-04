@@ -22,7 +22,7 @@ function doIt() {
 	zpreztoInit;
 	unset zpreztoInit;
 	rsync --exclude ".git/" --exclude ".DS_Store" --exclude "bootstrap.sh" \
-		--exclude "README.md" -avh --no-perms . ~;
+		--exclude "README.md" --exclude ".gitignore" -avh --no-perms . ~;
 	chsh -s /bin/zsh
 	zpreztoDestroy;
 	unset zpreztoDestroy;
