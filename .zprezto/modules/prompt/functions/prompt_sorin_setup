@@ -77,7 +77,7 @@ function prompt_sorin_setup {
   zstyle ':prezto:module:python:info:virtualenv' format '(%v)'
 
   # Define prompts.
-  PROMPT='%F{cyan}${_prompt_sorin_pwd}%f %F{blue}$python_info[virtualenv]%f%(!. %B%F{red}#%f%b.)${editor_info[keymap]} '
+  PROMPT='%F{cyan}${_prompt_sorin_pwd}%f %F{blue}%f%(!. %B%F{red}#%f%b.)${editor_info[keymap]} '
   RPROMPT='${editor_info[overwrite]}%(?:: %F{red}⏎%f)${VIM:+" %B%F{green}V%f%b"}${git_info[rprompt]}${git_info:+${(e)git_info[prompt]}}'
   SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 }

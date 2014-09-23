@@ -30,7 +30,8 @@ install nmap
 install tree
 install webkit2png
 
-# Python Setup
+# Backup Backup
+install duplicity
 
 # Remove outdated versions from the cellar
 cleanup
