@@ -1,11 +1,15 @@
-# Install command-line tools using Homebrew
-# Usage: `brew bundle Brewfile`
+function install() {
+    brew install "${@}" 2> /dev/null
+}
 
 # Make sure we’re using the latest Homebrew
-update
+brew update
 
 # Upgrade any already-installed formulae
-upgrade
+brew upgrade
+
+# Shellshock Safety!
+reinstall --build-from-source bash
 
 # Install GNU core utilities (those that come with OS X are outdated)
 # Don’t forget to add `$(brew --prefix coreutils)/libexec/gnubin` to `$PATH`.
@@ -34,4 +38,9 @@ install webkit2png
 install duplicity
 
 # Remove outdated versions from the cellar
-cleanup
+brew cleanup
+
+install readline
+install go
+install git
+install mercurial
