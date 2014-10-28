@@ -17,6 +17,7 @@ installcask slack
 installcask adium
 installcask istat-menus
 installcask colloquy
+installcask little-snitch
 
 ###############################################################################
 # Fonts!                                                            #
