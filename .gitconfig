@@ -1,0 +1,6 @@
+[user]
+	email = sean@mizron.net
+	name = Sean Herron
+
+[init]
+  defaultBranch = main
