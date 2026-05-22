@@ -1,0 +1,28 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+
+# brew bundle installs casks one-by-one; each may invoke sudo. Authenticate once
+# and refresh the credential cache until this script exits.
+if ! sudo -n true 2>/dev/null; then
+  sudo -v
+fi
+script_pid=$$
+(
+  while kill -0 "$script_pid" 2>/dev/null; do
+    sleep 60
+    sudo -n true 2>/dev/null || exit
+  done
+) &
+sudo_keepalive_pid=$!
+trap 'kill "$sudo_keepalive_pid" 2>/dev/null || true' EXIT
+
+brew bundle --file=/dev/stdin <<EOF
+{{ range .packages.darwin.brews -}}
+brew {{ . | quote }}
+{{ end -}}
+{{ range .packages.darwin.casks -}}
+cask {{ . | quote }}
+{{ end -}}
+EOF
+{{ end -}}

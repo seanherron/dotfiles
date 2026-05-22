@@ -1,0 +1,12 @@
+packages:
+  darwin:
+    brews:
+    - 'git'
+    casks:
+    - 'claude'
+    - 'claude-code'
+    - 'chatgpt'
+    - 'codex'
+    - 'cursor'
+    - 'google-chrome'
+    - 'cmux'
