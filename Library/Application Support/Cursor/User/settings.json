@@ -1,0 +1,7 @@
+{
+    "window.commandCenter": true,
+    "window.autoDetectColorScheme": false,
+    "editor.fontFamily": "JetBrainsMono Nerd Font, monospace",
+    "editor.fontLigatures": true,
+    "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font"
+}

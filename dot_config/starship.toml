@@ -1,0 +1,64 @@
+"$schema" = "https://starship.rs/config-schema.json"
+
+# Two-line prompt: context on top, input on bottom
+format = """
+$directory$git_branch$git_status$nodejs$python$rust$golang$docker_context$cmd_duration
+$character"""
+
+add_newline = true
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
+
+[directory]
+style = "bold cyan"
+truncation_length = 3
+truncate_to_repo = true
+read_only = "  "
+
+[git_branch]
+symbol = " "
+style = "bold purple"
+
+[git_status]
+style = "bold red"
+format = "([\\[$all_status$ahead_behind\\]]($style) )"
+
+[cmd_duration]
+min_time = 2000
+format = "took [$duration]($style) "
+style = "bold yellow"
+
+[nodejs]
+format = "via [$symbol($version )]($style)"
+style = "bold green"
+
+[python]
+format = "via [$symbol($version )]($style)"
+style = "bold yellow"
+
+[rust]
+format = "via [$symbol($version )]($style)"
+style = "bold red"
+
+[golang]
+format = "via [$symbol($version )]($style)"
+style = "bold cyan"
+
+[docker_context]
+format = "via [$symbol$context]($style) "
+style = "bold blue"
+
+[package]
+disabled = true
+
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[azure]
+disabled = true

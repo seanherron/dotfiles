@@ -2,7 +2,17 @@ packages:
   darwin:
     brews:
     - 'git'
+    - 'zsh'
+    - 'antidote'
+    - 'starship'
+    - 'fzf'
+    - 'zoxide'
+    - 'eza'
+    - 'bat'
+    - 'fd'
+    - 'ripgrep'
     casks:
+    - 'font-jetbrains-mono-nerd-font'
     - 'claude'
     - 'claude-code'
     - 'chatgpt'
@@ -10,3 +20,4 @@ packages:
     - 'cursor'
     - 'google-chrome'
     - 'cmux'
+    - 'ghostty'
