@@ -1,0 +1,14 @@
+{
+    "workbench.colorTheme": "Catppuccin Mocha",
+    "workbench.iconTheme": "catppuccin-mocha",
+    "catppuccin.accentColor": "mauve",
+    "editor.fontFamily": "JetBrainsMono Nerd Font, monospace",
+    "editor.fontLigatures": true,
+    "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
+    "editor.minimap.enabled": false,
+    "editor.tabSize": 2,
+    "files.autoSave": "onFocusChange",
+    "window.autoDetectColorScheme": false,
+    "window.commandCenter": true,
+    "workbench.startupEditor": "none"
+}

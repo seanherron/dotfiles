@@ -18,6 +18,7 @@ packages:
     - 'chatgpt'
     - 'codex'
     - 'cursor'
+    - 'visual-studio-code'
     - 'google-chrome'
     - 'cmux'
     - 'ghostty'

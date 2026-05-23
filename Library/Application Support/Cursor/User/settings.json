@@ -1,6 +1,9 @@
 {
     "window.commandCenter": true,
     "window.autoDetectColorScheme": false,
+    "workbench.colorTheme": "Catppuccin Mocha",
+    "workbench.iconTheme": "catppuccin-mocha",
+    "catppuccin.accentColor": "mauve",
     "editor.fontFamily": "JetBrainsMono Nerd Font, monospace",
     "editor.fontLigatures": true,
     "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font"

@@ -1,0 +1,21 @@
+#!/bin/bash
+# Install Cursor extensions needed for Catppuccin Mocha.
+# Re-runs whenever the extension list below changes (chezmoi hashes this file).
+# Requires the `cursor` CLI on PATH — install via Cursor → Cmd+Shift+P
+# → "Shell Command: Install 'cursor' command in PATH".
+
+set -euo pipefail
+
+if ! command -v cursor &>/dev/null; then
+  echo "cursor CLI not found on PATH; skipping extension install." >&2
+  exit 0
+fi
+
+extensions=(
+  Catppuccin.catppuccin-vsc        # Catppuccin color theme
+  Catppuccin.catppuccin-vsc-icons  # Matching file icon theme
+)
+
+for ext in "${extensions[@]}"; do
+  cursor --install-extension "$ext" --force
+done

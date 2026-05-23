@@ -4,8 +4,8 @@
 font-family = "JetBrainsMono Nerd Font"
 font-size = 14
 
-# Use the system appearance for light/dark mode
-theme = light:GruvboxLight,dark:GruvboxDarkHard
+# Catppuccin Mocha everywhere — same theme in both light and dark mode
+theme = "Catppuccin Mocha"
 
 # Sensible defaults
 cursor-style = block

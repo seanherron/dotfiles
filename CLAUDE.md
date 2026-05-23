@@ -46,3 +46,7 @@ The `private_` prefix on `dot_config/cmux/private_cmux.json` tells chezmoi to se
 ## Font convention
 
 The configured font for all code editors and terminals is **JetBrainsMono Nerd Font** (cask `font-jetbrains-mono-nerd-font`). When adding a new dotfile for any code editor or terminal emulator that supports font configuration, always set the font to JetBrainsMono Nerd Font. Use `"JetBrainsMono Nerd Font"` as the font family string (this is the correct PostScript name for the Nerd Font variant).
+
+## Color convention
+
+The default color scheme everywhere is **Catppuccin Mocha**. When adding a new dotfile for anything that supports theming (terminal, editor, prompt, pager, file lister, fuzzy finder, syntax highlighter, etc.), apply the Mocha variant — never Latte/Frappé/Macchiato or another palette. Prefer a built-in theme name (e.g. Ghostty's `"Catppuccin Mocha"`, bat's `"Catppuccin Mocha"`) over hand-rolled hex; fall back to the official Catppuccin port for that tool (https://github.com/catppuccin) when no built-in exists. The hex palette is defined once in `dot_config/starship.toml` under `[palettes.catppuccin_mocha]` — copy from there to keep colors consistent.

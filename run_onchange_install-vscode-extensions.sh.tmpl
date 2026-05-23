@@ -1,0 +1,21 @@
+#!/bin/bash
+# Install VS Code extensions needed for Catppuccin Mocha.
+# Re-runs whenever the extension list below changes (chezmoi hashes this file).
+# Requires the `code` CLI on PATH — install via VS Code → Cmd+Shift+P
+# → "Shell Command: Install 'code' command in PATH".
+
+set -euo pipefail
+
+if ! command -v code &>/dev/null; then
+  echo "code CLI not found on PATH; skipping extension install." >&2
+  exit 0
+fi
+
+extensions=(
+  Catppuccin.catppuccin-vsc        # Catppuccin color theme
+  Catppuccin.catppuccin-vsc-icons  # Matching file icon theme
+)
+
+for ext in "${extensions[@]}"; do
+  code --install-extension "$ext" --force
+done

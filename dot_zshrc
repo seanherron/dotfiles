@@ -25,6 +25,15 @@ if command -v brew &>/dev/null; then
   if [[ -r "${antidote_home}/share/antidote/antidote.zsh" ]]; then
     source "${antidote_home}/share/antidote/antidote.zsh"
     antidote load "${ZDOTDIR:-$HOME}/.zsh_plugins.txt"
+
+    # Catppuccin Mocha theme for zsh-syntax-highlighting — the plugin is
+    # cloned (kind:clone) so antidote doesn't auto-source the theme file;
+    # ask antidote for its path and source it after zsh-syntax-highlighting.
+    if (( $+functions[antidote] )); then
+      _cpc_theme="$(antidote path catppuccin/zsh-syntax-highlighting 2>/dev/null)/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh"
+      [[ -r "$_cpc_theme" ]] && source "$_cpc_theme"
+      unset _cpc_theme
+    fi
   fi
 fi
 
@@ -40,6 +49,13 @@ fi
 
 if command -v fzf &>/dev/null; then
   source <(fzf --zsh)
+  # Catppuccin Mocha colors — https://github.com/catppuccin/fzf
+  export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS:-}\
+ --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8\
+ --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc\
+ --color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8\
+ --color=selected-bg:#45475a\
+ --color=border:#313244,label:#cdd6f4"
 fi
 
 # --- Aliases ---
