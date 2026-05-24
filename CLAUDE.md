@@ -45,7 +45,15 @@ The `private_` prefix on `dot_config/cmux/private_cmux.json` tells chezmoi to se
 
 ## Font convention
 
-The configured font for all code editors and terminals is **JetBrainsMono Nerd Font** (cask `font-jetbrains-mono-nerd-font`). When adding a new dotfile for any code editor or terminal emulator that supports font configuration, always set the font to JetBrainsMono Nerd Font. Use `"JetBrainsMono Nerd Font"` as the font family string (this is the correct PostScript name for the Nerd Font variant).
+Primary font: **Berkeley Mono** (paid, installed via `run_onchange_install-berkeley-mono.sh.tmpl` which fetches the .otf files from a 1Password Document item named `Berkeley Mono` — the binary deliberately stays out of this public repo).
+
+Fallback font: **JetBrainsMono Nerd Font** (cask `font-jetbrains-mono-nerd-font`). Berkeley Mono ships without Nerd Font glyphs, so the fallback both covers fresh machines where Berkeley Mono hasn't been pulled yet AND fills in icon glyphs used by Starship / eza on a per-character basis.
+
+When adding a new dotfile for an editor or terminal that supports font configuration, always declare the fallback chain — never just Berkeley Mono on its own:
+
+- Editors (CSS-style, comma-separated): `"Berkeley Mono, JetBrainsMono Nerd Font, monospace"`
+- Ghostty (repeated directive): two `font-family =` lines, Berkeley Mono first
+- Anywhere only one font name is accepted: prefer `"Berkeley Mono"` and document the missing-glyphs caveat
 
 ## Color convention
 

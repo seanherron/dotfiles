@@ -1,0 +1,79 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# Install Berkeley Mono (a paid font) from 1Password into ~/Library/Fonts/.
+# Re-runs whenever this script's rendered content changes.
+#
+# One-time setup per Apple ID:
+#   1. Upload your Berkeley Mono download (the original .zip, OR individual
+#      .otf/.ttf files) to 1Password as a Document item titled exactly
+#      "Berkeley Mono" in any vault visible to your default account.
+#   2. Make sure the 1Password desktop integration is on (Settings ->
+#      Developer -> Integrate with 1Password CLI). With that, `op` uses
+#      Touch ID; no `op signin` dance.
+#   3. Run `chezmoi apply`. The script fetches the document and drops
+#      .otf/.ttf into ~/Library/Fonts/. macOS picks them up immediately.
+#
+# To force a re-fetch (e.g. you updated the fonts in 1Password):
+#   chezmoi state delete-bucket --bucket=scriptState
+#   chezmoi apply
+
+set -euo pipefail
+
+OP_ITEM="Berkeley Mono"
+FONT_DIR="$HOME/Library/Fonts"
+
+# Already installed? Skip silently.
+if compgen -G "$FONT_DIR/BerkeleyMono*" >/dev/null 2>&1 || \
+   compgen -G "$FONT_DIR/TX-02*" >/dev/null 2>&1; then
+  exit 0
+fi
+
+if ! command -v op &>/dev/null; then
+  echo "1Password CLI (op) not found; skipping Berkeley Mono install." >&2
+  echo "It will be installed by the brew bundle on the next chezmoi apply." >&2
+  exit 0
+fi
+
+if ! op whoami &>/dev/null; then
+  cat >&2 <<'MSG'
+Berkeley Mono install skipped: 1Password CLI is not signed in.
+
+Fix:
+  1. Open 1Password -> Settings -> Developer.
+  2. Enable "Integrate with 1Password CLI" (uses Touch ID, no shell signin).
+  3. Force this script to re-run:
+       chezmoi state delete-bucket --bucket=scriptState
+       chezmoi apply
+MSG
+  exit 0
+fi
+
+mkdir -p "$FONT_DIR"
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+
+if ! op document get "$OP_ITEM" --output "$tmp/payload" 2>"$tmp/err"; then
+  echo "Failed to fetch '$OP_ITEM' from 1Password:" >&2
+  cat "$tmp/err" >&2
+  exit 0
+fi
+
+# Accept either a zip of fonts or a single font file.
+kind="$(file -b "$tmp/payload")"
+case "$kind" in
+  *Zip\ archive*|*ZIP\ archive*)
+    # -j strips directory structure inside the zip; -o overwrites silently.
+    unzip -j -o "$tmp/payload" '*.otf' '*.ttf' -d "$FONT_DIR" >/dev/null
+    ;;
+  *OpenType*|*TrueType*|*font*)
+    cp "$tmp/payload" "$FONT_DIR/BerkeleyMono.otf"
+    ;;
+  *)
+    echo "Unrecognized content from 1Password item '$OP_ITEM' (got: $kind)." >&2
+    echo "Expected a .zip of font files, or a single .otf/.ttf." >&2
+    exit 0
+    ;;
+esac
+
+echo "Berkeley Mono installed to $FONT_DIR"
+{{ end -}}
