@@ -1,0 +1,60 @@
+[user]
+    name = {{ .name }}
+    email = {{ .email }}
+    signingkey = {{ .signingKey | quote }}
+
+[commit]
+    gpgsign = true
+
+[tag]
+    gpgsign = true
+
+[gpg]
+    format = ssh
+
+[gpg "ssh"]
+{{- if and (eq .chezmoi.os "darwin") (stat "/Applications/1Password.app") }}
+    program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+{{- end }}
+    allowedSignersFile = ~/.config/git/allowed_signers
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = true
+
+[fetch]
+    prune = true
+
+[push]
+    autoSetupRemote = true
+    default = simple
+
+[rerere]
+    enabled = true
+
+[rebase]
+    autoStash = true
+    autoSquash = true
+
+[diff]
+    algorithm = histogram
+    colorMoved = default
+
+[merge]
+    conflictstyle = zdiff3
+
+[column]
+    ui = auto
+
+[branch]
+    sort = -committerdate
+
+# Optional per-directory identity overrides. Uncomment and create the include
+# files (e.g. ~/.gitconfig-work) to use different name/email/signingkey inside
+# specific directories on the same machine.
+# [includeIf "gitdir:~/work/"]
+#     path = ~/.gitconfig-work
+# [includeIf "gitdir:~/personal/"]
+#     path = ~/.gitconfig-personal

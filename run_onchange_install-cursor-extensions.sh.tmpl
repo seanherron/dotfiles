@@ -12,8 +12,14 @@ if ! command -v cursor &>/dev/null; then
 fi
 
 extensions=(
-  Catppuccin.catppuccin-vsc        # Catppuccin color theme
-  Catppuccin.catppuccin-vsc-icons  # Matching file icon theme
+  Catppuccin.catppuccin-vsc                       # Catppuccin color theme
+  Catppuccin.catppuccin-vsc-icons                 # Matching file icon theme
+  1Password.op-vscode                             # 1Password secret references
+  eamodio.gitlens                                 # Blame, history, line annotations
+  github.vscode-pull-request-github               # Review PRs in the editor
+  usernamehw.errorlens                            # Inline diagnostics
+  EditorConfig.EditorConfig                       # Respect .editorconfig
+  streetsidesoftware.code-spell-checker           # Typo catcher
 )
 
 for ext in "${extensions[@]}"; do
