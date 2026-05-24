@@ -13,8 +13,16 @@ if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
 else
   compinit -C
 fi
-zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+# fzf-tab takes over the completion menu, so disable zsh's built-in one.
+# (fzf-tab's docs are explicit: don't enable `menu select` when using fzf-tab.)
+zstyle ':completion:*' menu no
+# Preview directory contents on `cd <TAB>`.
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza --icons -1 --color=always $realpath 2>/dev/null || ls -1 $realpath'
+# Preview env-var values on `export <TAB>` / `unset <TAB>` / `$<TAB>`.
+zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' fzf-preview 'echo ${(P)word}'
+# Switch completion groups in the fzf-tab popup with `<` / `>`.
+zstyle ':fzf-tab:*' switch-group '<' '>'
 
 # --- Options ---
 setopt AUTO_CD CORRECT NO_BEEP
@@ -40,6 +48,14 @@ fi
 # --- Prompt (Starship) ---
 if command -v starship &>/dev/null; then
   eval "$(starship init zsh)"
+fi
+
+# --- Version manager (mise) ---
+# Activates mise-managed tool versions (Node, Python, Ruby, Go, etc.) per
+# directory based on `.tool-versions` / `.mise.toml`. Must run before any tool
+# that resolves an interpreter via PATH.
+if command -v mise &>/dev/null; then
+  eval "$(mise activate zsh)"
 fi
 
 # --- Navigation ---
@@ -72,3 +88,34 @@ fi
 if command -v rg &>/dev/null; then
   alias grep='rg'
 fi
+
+if command -v lazygit &>/dev/null; then
+  alias lg='lazygit'
+fi
+
+# --- Shell history (atuin) ---
+# Ctrl+R opens atuin's fuzzy history search. `--disable-up-arrow` keeps the
+# vanilla zsh up-arrow behavior (recall the previous command verbatim).
+if command -v atuin &>/dev/null; then
+  eval "$(atuin init zsh --disable-up-arrow)"
+fi
+
+# --- Per-directory env (direnv) ---
+# Loads `.envrc` on `cd`. Hook last so it wraps any precmd_functions set
+# above (mise, starship). New `.envrc` files require `direnv allow` first.
+if command -v direnv &>/dev/null; then
+  eval "$(direnv hook zsh)"
+fi
+
+# --- 1Password SSH agent ---
+# Point SSH/git at the 1Password agent socket when it's running locally. On a
+# remote machine reached over `ssh -A`, SSH_AUTH_SOCK is set by the inbound
+# connection — don't clobber it.
+if [[ -z "${SSH_AUTH_SOCK:-}" ]]; then
+  _op_sock="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+  [[ -S "$_op_sock" ]] && export SSH_AUTH_SOCK="$_op_sock"
+  unset _op_sock
+fi
+
+# Quick sanity check: which key am I about to sign with?
+alias gsign='git config --get user.signingkey && echo "--- keys visible to agent ---" && ssh-add -L 2>/dev/null | head -5'

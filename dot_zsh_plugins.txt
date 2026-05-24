@@ -1,3 +1,7 @@
+# Load order matters: fzf-tab must come before zsh-autosuggestions and
+# zsh-syntax-highlighting so it can hook into the completion system before
+# they wrap zle widgets.
+Aloxaf/fzf-tab
 zsh-users/zsh-autosuggestions
 zsh-users/zsh-syntax-highlighting
 catppuccin/zsh-syntax-highlighting kind:clone

@@ -1,6 +1,10 @@
 # Ghostty configuration
 # Docs: https://ghostty.org/docs/config
 
+# Berkeley Mono first; JetBrainsMono Nerd Font catches Nerd Font icon glyphs
+# and is the fallback on machines where Berkeley Mono hasn't been pulled
+# from 1Password yet (see run_onchange_install-berkeley-mono.sh.tmpl).
+font-family = "Berkeley Mono"
 font-family = "JetBrainsMono Nerd Font"
 font-size = 14
 

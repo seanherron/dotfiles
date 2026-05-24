@@ -1,0 +1,21 @@
+{{/*
+Rendered once on `chezmoi init` (and re-rendered when this template changes).
+The result is saved to ~/.config/chezmoi/chezmoi.toml and the values become
+available as {{ .key }} in every other template.
+
+promptStringOnce reads from the existing data first, so re-running init does
+not re-prompt. Use `chezmoi init --force` to overwrite stored answers.
+*/ -}}
+
+{{- $profile     := promptStringOnce . "profile"     "Profile (personal or work)" "personal" -}}
+{{- $name        := promptStringOnce . "name"        "Full name for git commits" -}}
+{{- $email       := promptStringOnce . "email"       "Git author email" -}}
+{{- $signingKey  := promptStringOnce . "signingKey"  "SSH public key for git signing (paste full 'ssh-ed25519 AAAA... comment' line from 1Password)" -}}
+{{- $githubUser  := promptStringOnce . "githubUser"  "GitHub username" -}}
+
+[data]
+    profile     = {{ $profile     | quote }}
+    name        = {{ $name        | quote }}
+    email       = {{ $email       | quote }}
+    signingKey  = {{ $signingKey  | quote }}
+    githubUser  = {{ $githubUser  | quote }}
