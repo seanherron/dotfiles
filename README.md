@@ -39,6 +39,9 @@ Answers persist to `~/.config/chezmoi/chezmoi.toml`. `chezmoi apply` later won't
 | `dot_config/cmux/private_cmux.json`                   | `~/.config/cmux/cmux.json`                             | cmux config (commented template scaffold, 0600)                                 |
 | `dot_config/bat/config`                               | `~/.config/bat/config`                                 | bat — Catppuccin Mocha theme                                                    |
 | `dot_config/eza/theme.yml`                            | `~/.config/eza/theme.yml`                              | eza colors                                                                      |
+| `dot_config/lazygit/config.yml`                       | `~/.config/lazygit/config.yml`                         | lazygit — Catppuccin Mocha + delta as the pager                                 |
+| `dot_config/btop/btop.conf`                           | `~/.config/btop/btop.conf`                             | btop — Catppuccin Mocha theme + sane defaults                                   |
+| `dot_editorconfig`                                    | `~/.editorconfig`                                      | Global EditorConfig fallback for projects without their own                      |
 | `private_dot_ssh/private_config.tmpl`                 | `~/.ssh/config` (0700/0600)                            | SSH — 1Password IdentityAgent, ForwardAgent off, dev-box stub                   |
 | `Library/Application Support/Code/User/settings.json` | same path under `~`                                    | VSCode — Claude Code panel layout, Catppuccin, format-on-save                   |
 | `Library/Application Support/Code/User/keybindings.json` | same path under `~`                                 | VSCode — `cmd+j` editor ↔ Claude panel ping-pong                                |
@@ -67,6 +70,198 @@ chezmoi cd                         # drop into this repo's working dir
 
 - **Theme**: Catppuccin Mocha everywhere. Prefer a built-in theme name (e.g. Ghostty's `Catppuccin Mocha`, bat's `Catppuccin Mocha`). The hex palette lives once in `dot_config/starship.toml` under `[palettes.catppuccin_mocha]`.
 - **Font**: Berkeley Mono primary, JetBrainsMono Nerd Font fallback. Always declare both in font-family strings — Berkeley Mono ships without Nerd Font glyphs, so Starship/eza icons need the fallback for per-character resolution. See `CLAUDE.md` for the exact pattern in each editor/terminal.
+
+## CLI utilities
+
+Every tool below is installed via `packages.yaml` and configured by `dot_zshrc` / `dot_zprofile` / its own `dot_config/` entry. Examples are written assuming a fresh `chezmoi apply` — copy-paste should Just Work.
+
+### git-delta — prettier diffs
+
+Wired into `~/.gitconfig` as both the pager and the `git add -p` filter. Every `git diff`, `git log -p`, `git show`, and `git stash show -p` is syntax-highlighted (Catppuccin Mocha) with line numbers and section navigation.
+
+```bash
+git diff                          # delta is the pager — n/N jumps between files
+git log -p -- src/foo.rs          # syntax-highlighted history for one file
+git show HEAD                     # same treatment for a single commit
+git -c delta.side-by-side=true diff   # one-off side-by-side view
+```
+
+To turn delta off for a single command, pipe through `cat`: `git --no-pager diff` or `git -c core.pager=cat diff`.
+
+### gh — GitHub CLI
+
+```bash
+gh auth login                     # one-time: pick "SSH" and reuse your 1Password key
+gh pr create --fill               # title/body from the latest commit
+gh pr view --web                  # open the PR for the current branch in a browser
+gh pr checkout 42                 # check out PR #42 as a local branch
+gh pr checks                      # CI status for the current branch
+gh repo clone seanherron/dotfiles
+gh issue list --assignee @me
+gh run watch                      # tail the most recent workflow run
+```
+
+### fzf-tab — fzf-powered tab completion
+
+Press `<TAB>` after any command and the completion menu becomes an fzf popup with previews. Listed first in `dot_zsh_plugins.txt` because it has to hook the completion system before zsh-autosuggestions and zsh-syntax-highlighting wrap zle.
+
+```bash
+cd <TAB>                          # popup with directory previews (eza tree)
+git checkout <TAB>                # branch list, fuzzy-filterable
+kill <TAB>                        # process list, fuzzy-filterable
+export PA<TAB>                    # env-var names with current values previewed
+ssh <TAB>                         # hosts from ~/.ssh/config
+```
+
+Keys inside the popup: type to filter, `<TAB>` to confirm, `<` / `>` to switch between completion groups (e.g. local branches vs remote branches), `?` to toggle the preview window.
+
+### tealdeer (`tldr`) — practical man-page examples
+
+`man` tells you every flag; `tldr` shows you the five commands you actually want.
+
+```bash
+tldr --update                     # first-time and occasional: refresh the cache
+tldr tar                          # `tar -xzf …`, `tar -czf …`, etc.
+tldr ffmpeg                       # common transcodes without reading 1k lines of man
+tldr ssh                          # the actually-useful invocations
+```
+
+The cache lives at `~/.cache/tealdeer`; `tldr --update` is the only maintenance.
+
+### mas — Mac App Store CLI
+
+`mas` lets you put App Store apps into the same `packages.yaml` flow as brews and casks. The install script (`run_onchange_darwin-install-packages.sh.tmpl`) renders each entry as a Brewfile `mas` line.
+
+```bash
+mas search Xcode                  # find the numeric ID (first column)
+mas list                          # what's already installed via the App Store
+```
+
+Add to `.chezmoidata/packages.yaml`:
+
+```yaml
+mas:
+  - '497799835:Xcode'
+  - '1451685025:WireGuard'
+```
+
+Format is `'<id>:<App Name>'`. You must be signed in to the App Store on the machine for `mas` to install anything — `mas account` shows the current user.
+
+### atuin — searchable shell history
+
+Replaces zsh's built-in `Ctrl+R` with a fuzzy, full-screen history search that's shared across terminals (no more "I ran that an hour ago in another tab"). Up-arrow keeps the vanilla behavior (recall the previous command verbatim) because `dot_zshrc` passes `--disable-up-arrow`.
+
+```bash
+# inside any prompt:
+^R                                # open atuin's TUI; type to filter, Enter to run
+atuin search docker run           # CLI search without entering the TUI
+atuin stats                       # what your shell habits actually look like
+atuin import auto                 # one-time: pull pre-atuin history from ~/.zsh_history
+```
+
+Cloud sync is **opt-in** and disabled by default — local-only out of the box. If you want sync across machines: `atuin register -u <user> -e <email>` then `atuin sync` on each machine.
+
+### mise — universal version manager
+
+One tool to manage Node, Python, Ruby, Go, Rust, Bun, etc. versions per project. Reads `.tool-versions` (asdf-compatible) or `.mise.toml`. Activated early in `dot_zshrc` so the right interpreter is on PATH before anything that resolves binaries.
+
+```bash
+mise use --global node@22         # set a global default
+mise use node@20 python@3.12      # set per-directory (writes .mise.toml here)
+mise install                      # install everything declared in .mise.toml
+mise ls                           # what's active in this directory
+mise exec node@18 -- node app.js  # one-off run with a different version
+mise upgrade                      # pull newer minor/patch versions
+```
+
+Combine with direnv: `mise` handles tool versions; `direnv` handles env vars.
+
+### direnv — per-directory env vars
+
+Sources a `.envrc` file when you `cd` into a directory, unloads it when you leave. Hooked last in `dot_zshrc` so it wraps every other precmd hook.
+
+```bash
+cd ~/work/some-project
+echo 'export DATABASE_URL=postgres://localhost/myapp' > .envrc
+echo 'export AWS_PROFILE=staging' >> .envrc
+direnv allow                      # confirm — required once per .envrc change
+
+cd ~/work/some-project            # → direnv: loading .envrc
+echo $DATABASE_URL                # → postgres://localhost/myapp
+cd ..                             # → direnv: unloading
+```
+
+For secrets, never commit `.envrc` — gitignore it or use `dotenv` (`echo 'dotenv' > .envrc; direnv allow` then drop secrets in `.env`).
+
+### lazygit — git TUI
+
+```bash
+lazygit                           # or `lg` (alias)
+```
+
+Stage hunks with `<space>`, commit with `c`, push with `P`, pull with `p`, rebase interactive with `e` on a commit, cherry-pick with `c` on a commit, view diffs with `<enter>`. `?` opens the full keybindings cheatsheet. Configured to use delta as the diff pager and Catppuccin Mocha for the UI.
+
+### btop — system monitor
+
+```bash
+btop                              # CPU / memory / network / processes
+```
+
+Inside btop: `q` quits, `+`/`-` resize the process panel, `f` filters processes, `<enter>` shows process details, `m`/`p`/`n` toggles memory/processes/network panels. Catppuccin Mocha theme set via `dot_config/btop/btop.conf`.
+
+### Modern CLI replacements (already aliased)
+
+| Tool       | Replaces  | Aliased to    | Notes                                      |
+| ---------- | --------- | ------------- | ------------------------------------------ |
+| `eza`      | `ls`      | `ls`/`ll`/`lt` | icons, git status, tree view              |
+| `bat`      | `cat`     | `cat`         | syntax highlighting, paging off            |
+| `ripgrep`  | `grep`    | `grep`        | gitignore-aware, fast                      |
+| `fd`       | `find`    | (no alias)    | use `fd pattern` instead of `find . -name` |
+| `dust`     | `du`      | (no alias)    | tree view of biggest dirs first            |
+| `procs`    | `ps`      | (no alias)    | colorized, tree view with `procs --tree`   |
+| `sd`       | `sed`     | (no alias)    | sane regex syntax for find-and-replace     |
+| `zoxide`   | `cd`      | `z` (and `cd`) | jumps to frecent dirs: `z dotf`            |
+
+Examples for the un-aliased ones:
+
+```bash
+fd '\.tmpl$'                      # find templates anywhere below cwd
+fd -t d node_modules              # find node_modules dirs
+dust                              # biggest dirs in cwd
+dust -d 2 ~/                      # 2-level deep summary of $HOME
+procs                             # all processes, colorized
+procs --tree firefox              # process tree filtered to firefox
+echo 'foo bar foo' | sd 'foo' 'baz'   # → baz bar baz
+sd '(\w+)@(\w+)' '$2:$1' file.txt # capture groups, written like literal regex
+```
+
+### hyperfine — command benchmarking
+
+```bash
+hyperfine 'rg foo' 'grep -r foo .'                  # head-to-head with warmup
+hyperfine --warmup 3 'npm run build'                # warm caches before timing
+hyperfine -L impl python,node 'tldr {impl}'        # parameter sweep
+```
+
+Reports mean, min/max, σ, and tells you which is faster with a confidence ratio.
+
+### GNU coreutils + gnu-sed on macOS
+
+`dot_zprofile` prepends `coreutils/libexec/gnubin` and `gnu-sed/libexec/gnubin` to PATH so `ls`, `date`, `sed`, etc. behave like Linux without the `g`-prefix dance.
+
+```bash
+date -d 'next friday'             # GNU date: relative-time parsing
+sed -i 's/foo/bar/' file          # GNU sed: -i without a backup-suffix arg
+ls --time-style=long-iso          # GNU ls flags
+```
+
+If you ever need the macOS BSD version specifically, the originals are still on PATH at `/usr/bin/sed`, `/bin/ls`, etc. — invoke by absolute path.
+
+### .editorconfig
+
+`dot_editorconfig` lays down a global `~/.editorconfig` so editors that respect the spec (VSCode/Cursor with the EditorConfig extension, JetBrains IDEs, Helix, Neovim with a plugin) fall back to LF + UTF-8 + trim-whitespace + 2-space indent when a project has no `.editorconfig` of its own. Per-language overrides for Go/Rust/Python/Make match each ecosystem's conventions.
+
+Projects with their own `.editorconfig` win — this is just the floor.
 
 ## SSH + git signing
 

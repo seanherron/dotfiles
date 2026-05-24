@@ -1,0 +1,30 @@
+# Global EditorConfig fallback — used by any editor that respects the
+# EditorConfig spec when a project has no .editorconfig of its own.
+# https://editorconfig.org
+#
+# Per-project .editorconfig files take precedence; this is just the floor.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+[*.{md,markdown}]
+trim_trailing_whitespace = false  # two-space trailing = hard line break
+
+[Makefile]
+indent_style = tab
+
+[*.{go,gotmpl}]
+indent_style = tab
+
+[*.{py,rs}]
+indent_size = 4
+
+[*.{sh,bash,zsh}]
+indent_size = 2

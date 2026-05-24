@@ -1,0 +1,43 @@
+# lazygit config — Catppuccin Mocha
+# https://github.com/catppuccin/lazygit
+#
+# On macOS, lazygit defaults to ~/Library/Application Support/lazygit/config.yml.
+# dot_zprofile exports XDG_CONFIG_HOME=$HOME/.config, which makes lazygit read
+# this file instead. If you launch lazygit from a context that doesn't inherit
+# that env var, set `LG_CONFIG_FILE=~/.config/lazygit/config.yml` explicitly.
+
+gui:
+  theme:
+    activeBorderColor:
+      - "#b4befe"  # lavender
+      - bold
+    inactiveBorderColor:
+      - "#a6adc8"  # subtext0
+    optionsTextColor:
+      - "#89b4fa"  # blue
+    selectedLineBgColor:
+      - "#313244"  # surface0
+    cherryPickedCommitBgColor:
+      - "#45475a"  # surface1
+    cherryPickedCommitFgColor:
+      - "#b4befe"  # lavender
+    unstagedChangesColor:
+      - "#f38ba8"  # red
+    defaultFgColor:
+      - "#cdd6f4"  # text
+    searchingActiveBorderColor:
+      - "#f9e2af"  # yellow
+  authorColors:
+    "*": "#b4befe"
+  nerdFontsVersion: "3"
+
+git:
+  paging:
+    colorArg: always
+    pager: delta --paging=never
+  commit:
+    signOff: false
+  log:
+    order: topo-order
+    showGraph: always
+    showWholeGraph: true

@@ -29,12 +29,15 @@ chezmoi run run_onchange_darwin-install-packages.sh.tmpl
 
 | Path | Maps to | Purpose |
 |------|---------|---------|
-| `dot_zprofile` | `~/.zprofile` | Login shell: Homebrew PATH setup |
-| `dot_zshrc` | `~/.zshrc` | Interactive shell: history, completions, plugins, aliases |
-| `dot_zsh_plugins.txt` | `~/.zsh_plugins.txt` | Antidote plugin list (zsh-autosuggestions, zsh-syntax-highlighting) |
+| `dot_zprofile` | `~/.zprofile` | Login shell: Homebrew PATH, XDG dirs, GNU tools on PATH |
+| `dot_zshrc` | `~/.zshrc` | Interactive shell: history, completions, plugins, aliases, mise/atuin/direnv |
+| `dot_zsh_plugins.txt` | `~/.zsh_plugins.txt` | Antidote plugin list (fzf-tab, zsh-autosuggestions, zsh-syntax-highlighting) |
 | `dot_config/starship.toml` | `~/.config/starship.toml` | Starship prompt config |
 | `dot_config/cmux/private_cmux.json` | `~/.config/cmux/cmux.json` | cmux terminal multiplexer config (JSONC format) |
-| `.chezmoidata/packages.yaml` | — | Data file: Homebrew brews and casks to install |
+| `dot_config/lazygit/config.yml` | `~/.config/lazygit/config.yml` | lazygit Catppuccin theme + delta as the pager |
+| `dot_config/btop/btop.conf` | `~/.config/btop/btop.conf` | btop Catppuccin theme + defaults |
+| `dot_editorconfig` | `~/.editorconfig` | Global EditorConfig fallback |
+| `.chezmoidata/packages.yaml` | — | Data file: Homebrew brews/casks + Mac App Store apps to install |
 | `run_onchange_darwin-install-packages.sh.tmpl` | — | Script: runs `brew bundle` whenever `packages.yaml` changes |
 
 ## Template system
