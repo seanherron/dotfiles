@@ -24,5 +24,9 @@ brew {{ . | quote }}
 {{ range .packages.darwin.casks -}}
 cask {{ . | quote }}
 {{ end -}}
+{{ range .packages.darwin.mas -}}
+{{- $parts := splitn ":" 2 . -}}
+mas {{ index $parts "_1" | quote }}, id: {{ index $parts "_0" }}
+{{ end -}}
 EOF
 {{ end -}}
