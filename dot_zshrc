@@ -72,3 +72,16 @@ fi
 if command -v rg &>/dev/null; then
   alias grep='rg'
 fi
+
+# --- 1Password SSH agent ---
+# Point SSH/git at the 1Password agent socket when it's running locally. On a
+# remote machine reached over `ssh -A`, SSH_AUTH_SOCK is set by the inbound
+# connection — don't clobber it.
+if [[ -z "${SSH_AUTH_SOCK:-}" ]]; then
+  _op_sock="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+  [[ -S "$_op_sock" ]] && export SSH_AUTH_SOCK="$_op_sock"
+  unset _op_sock
+fi
+
+# Quick sanity check: which key am I about to sign with?
+alias gsign='git config --get user.signingkey && echo "--- keys visible to agent ---" && ssh-add -L 2>/dev/null | head -5'

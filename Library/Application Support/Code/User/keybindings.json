@@ -1,0 +1,15 @@
+// VSCode keybindings tuned for Claude Code in a side-panel terminal.
+// cmd+j focuses the panel from the editor and the editor from the panel,
+// so you can ping-pong between code and Claude without losing the layout.
+[
+    { "key": "cmd+j", "command": "-workbench.action.togglePanel" },
+    { "key": "cmd+j", "command": "workbench.action.focusPanel",            "when": "!panelFocus" },
+    { "key": "cmd+j", "command": "workbench.action.focusActiveEditorGroup", "when": "panelFocus" },
+
+    { "key": "cmd+shift+j", "command": "workbench.action.togglePanel" },
+
+    { "key": "cmd+\\",      "command": "workbench.action.splitEditor" },
+    { "key": "cmd+k cmd+c", "command": "workbench.action.focusFirstEditorGroup" },
+
+    { "key": "cmd+k cmd+t", "command": "claude-code.focus" }
+]

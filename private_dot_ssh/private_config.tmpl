@@ -1,0 +1,44 @@
+# Managed by chezmoi. The `private_` prefix on the dir and file enforce
+# 0700 / 0600 perms so ssh will actually load this without complaining.
+
+{{- $opAgentSock := joinPath .chezmoi.homeDir "Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" }}
+
+Host *
+    # Connection robustness
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    Compression yes
+
+    # Connection multiplexing: reuse one TCP session for follow-up ssh/scp/git.
+    ControlMaster auto
+    ControlPath ~/.ssh/cm-%r@%h:%p
+    ControlPersist 10m
+
+    # Add forwarded keys to the agent on demand.
+    AddKeysToAgent yes
+{{- if and (eq .chezmoi.os "darwin") (stat $opAgentSock) }}
+
+    # 1Password SSH agent: keys live in the vault, every use prompts Touch ID.
+    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+{{- end }}
+
+    # ForwardAgent is intentionally OFF here. Any host you connect to with
+    # ForwardAgent on can use your local 1Password agent to sign as you for
+    # the lifetime of the connection. Opt in per-host below for trusted dev
+    # boxes only.
+    ForwardAgent no
+
+{{ if .githubUser -}}
+Host github.com
+    HostName github.com
+    User git
+    UseKeychain yes
+{{ end }}
+# --- Trusted dev boxes -----------------------------------------------------
+# Copy this block, set HostName + User, and uncomment to allow agent
+# forwarding so `git commit` on the remote signs via your local 1Password.
+#
+# Host my-dev-box
+#     HostName dev.example.com
+#     User {{ .githubUser }}
+#     ForwardAgent yes
