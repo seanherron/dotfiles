@@ -1,0 +1,35 @@
+# tealdeer (`tldr`) — practical man-page examples.
+# Catppuccin Mocha-ish styling via RGB; tealdeer doesn't accept hex directly.
+
+[display]
+compact = false
+use_pager = false
+
+[updates]
+# Refresh the local pages cache once a week.
+auto_update = true
+auto_update_interval_hours = 168
+
+# --- Style (Catppuccin Mocha palette via RGB) ---
+
+[style.description]
+# text  #cdd6f4
+foreground = { rgb = { r = 205, g = 214, b = 244 } }
+
+[style.command_name]
+# mauve #cba6f7
+foreground = { rgb = { r = 203, g = 166, b = 247 } }
+bold = true
+
+[style.example_text]
+# green #a6e3a1
+foreground = { rgb = { r = 166, g = 227, b = 161 } }
+
+[style.example_code]
+# blue  #89b4fa
+foreground = { rgb = { r = 137, g = 180, b = 250 } }
+
+[style.example_variable]
+# peach #fab387
+foreground = { rgb = { r = 250, g = 179, b = 135 } }
+italic = true

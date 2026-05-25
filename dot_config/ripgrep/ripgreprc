@@ -1,0 +1,22 @@
+# ripgrep defaults — one flag per line, no quoting.
+# Loaded via RIPGREP_CONFIG_PATH (exported from dot_zprofile).
+# Override any flag on the command line as usual.
+
+# Match case-insensitively unless the pattern has an uppercase letter.
+--smart-case
+
+# Search hidden files (still respects .gitignore).
+--hidden
+
+# Don't recurse into VCS metadata or common build/cache dirs.
+--glob=!.git/
+--glob=!node_modules/
+--glob=!.direnv/
+--glob=!.venv/
+--glob=!target/
+--glob=!dist/
+--glob=!.next/
+
+# Truncate very long matched lines but show a preview.
+--max-columns=200
+--max-columns-preview

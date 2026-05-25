@@ -29,6 +29,7 @@ packages:
     # System
     - 'btop'      # prettier `htop`
     - 'mas'       # Mac App Store CLI (consumed by `mas` section below)
+    - 'zellij'    # terminal multiplexer (portable; for SSH/server use where cmux isn't available)
     # GNU tools on macOS (PATH set in dot_zprofile to make them unprefixed)
     - 'coreutils'
     - 'gnu-sed'

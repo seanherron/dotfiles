@@ -1,0 +1,33 @@
+# direnv stdlib extensions — loaded on every `.envrc` evaluation.
+# Drop helpers here that you want available in any project's .envrc.
+
+# layout_uv: use `uv` to manage a project virtualenv, with PATH wired up.
+# Usage in .envrc: `layout uv`
+layout_uv() {
+    if ! has uv; then
+        log_error "uv not found on PATH"
+        return 1
+    fi
+    local venv="${UV_PROJECT_ENVIRONMENT:-.venv}"
+    [[ -d "$venv" ]] || uv venv "$venv" >&2
+    VIRTUAL_ENV="$(cd "$venv" && pwd)"
+    PATH_add "$VIRTUAL_ENV/bin"
+    export VIRTUAL_ENV
+}
+
+# use_op: pull a secret from 1Password via the CLI and export it.
+# Usage: `use op MY_API_KEY "op://Personal/My Item/credential"`
+use_op() {
+    local varname="$1"
+    local opref="$2"
+    if ! has op; then
+        log_error "1Password CLI (op) not found"
+        return 1
+    fi
+    local value
+    value="$(op read "$opref" 2>/dev/null)" || {
+        log_error "op read failed for $opref"
+        return 1
+    }
+    export "$varname=$value"
+}

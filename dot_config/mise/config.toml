@@ -1,0 +1,19 @@
+# Global mise config. Per-project .mise.toml / .tool-versions still wins.
+# Docs: https://mise.jdx.dev/configuration.html
+
+[settings]
+# Don't warn about idiomatic version files (.nvmrc, .python-version) — opt in
+# explicitly per tool below if you want them auto-read in a project.
+idiomatic_version_file_enable_tools = []
+
+# Quietly install missing tool versions when entering a project directory.
+not_found_auto_install = true
+
+# Stable + fast: avoid prerelease channels in `mise outdated`.
+experimental = false
+
+# [tools]
+# Uncomment to pin a global default version. Project-level config overrides.
+# node = "lts"
+# python = "3.13"
+# go = "latest"

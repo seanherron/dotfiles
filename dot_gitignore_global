@@ -1,0 +1,33 @@
+# Global ignore — applies to every git repo on this machine.
+# Wired into ~/.gitconfig via [core] excludesfile.
+# Per-repo .gitignore still wins for things that need to be tracked locally.
+
+# --- macOS noise ---
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# --- Editor / IDE detritus ---
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+.cursor/
+*.code-workspace
+
+# --- direnv ---
+.direnv/
+.envrc.local
+
+# --- Common local-only safety net ---
+# Not a substitute for per-repo .gitignore — these are last-resort catches for
+# things accidentally created at the repo root before a proper ignore exists.
+.env.local
+.env.*.local
+node_modules/
+.venv/
+__pycache__/
