@@ -1,0 +1,26 @@
+# Atuin (shell history) — Ctrl+R search.
+# The up-arrow stays bound to vanilla zsh history-search (see dot_zshrc:
+# `atuin init zsh --disable-up-arrow`).
+
+# Pressing Enter on a selected entry runs it immediately. False = land it on
+# the command line so you can edit or confirm before executing.
+enter_accept = false
+
+# Compact UI mode renders fewer ornaments than the "full" view.
+style = "compact"
+
+# Rows of history shown inline (compact mode); full screen takes over above this.
+inline_height = 20
+
+# Default filter on opening Ctrl+R search. Switch with Ctrl+R while in the UI.
+# global    = all hosts that share this Atuin sync account
+# host      = current machine only
+# session   = current shell session only
+# directory = current directory only
+filter_mode = "global"
+
+# Default search mode (fuzzy is closer to fzf-tab muscle memory).
+search_mode = "fuzzy"
+
+# Whether to show preview pane with full command text.
+show_preview = true
