@@ -4,4 +4,3 @@
 Aloxaf/fzf-tab
 zsh-users/zsh-autosuggestions
 zsh-users/zsh-syntax-highlighting
-catppuccin/zsh-syntax-highlighting kind:clone

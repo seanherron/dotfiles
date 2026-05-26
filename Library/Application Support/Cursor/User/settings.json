@@ -3,9 +3,9 @@
     "workbench.colorTheme": "Catppuccin Mocha",
     "workbench.iconTheme": "catppuccin-mocha",
     "catppuccin.accentColor": "mauve",
-    "editor.fontFamily": "Berkeley Mono, JetBrainsMono Nerd Font, monospace",
+    "editor.fontFamily": "Berkeley Mono, monospace",
     "editor.fontLigatures": true,
-    "terminal.integrated.fontFamily": "Berkeley Mono, JetBrainsMono Nerd Font",
+    "terminal.integrated.fontFamily": "Berkeley Mono",
 
     // --- Editor ---
     "editor.minimap.enabled": false,

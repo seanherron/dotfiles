@@ -18,7 +18,7 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 # (fzf-tab's docs are explicit: don't enable `menu select` when using fzf-tab.)
 zstyle ':completion:*' menu no
 # Preview directory contents on `cd <TAB>`.
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza --icons -1 --color=always $realpath 2>/dev/null || ls -1 $realpath'
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath 2>/dev/null || ls -1 $realpath'
 # Preview env-var values on `export <TAB>` / `unset <TAB>` / `$<TAB>`.
 zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' fzf-preview 'echo ${(P)word}'
 # Switch completion groups in the fzf-tab popup with `<` / `>`.
@@ -33,15 +33,6 @@ if command -v brew &>/dev/null; then
   if [[ -r "${antidote_home}/share/antidote/antidote.zsh" ]]; then
     source "${antidote_home}/share/antidote/antidote.zsh"
     antidote load "${ZDOTDIR:-$HOME}/.zsh_plugins.txt"
-
-    # Catppuccin Mocha theme for zsh-syntax-highlighting — the plugin is
-    # cloned (kind:clone) so antidote doesn't auto-source the theme file;
-    # ask antidote for its path and source it after zsh-syntax-highlighting.
-    if (( $+functions[antidote] )); then
-      _cpc_theme="$(antidote path catppuccin/zsh-syntax-highlighting 2>/dev/null)/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh"
-      [[ -r "$_cpc_theme" ]] && source "$_cpc_theme"
-      unset _cpc_theme
-    fi
   fi
 fi
 
@@ -65,20 +56,20 @@ fi
 
 if command -v fzf &>/dev/null; then
   source <(fzf --zsh)
-  # Catppuccin Mocha colors — https://github.com/catppuccin/fzf
+  # Nord colors
   export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS:-}\
- --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8\
- --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc\
- --color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8\
- --color=selected-bg:#45475a\
- --color=border:#313244,label:#cdd6f4"
+ --color=bg+:#3B4252,bg:#2E3440,spinner:#81A1C1,hl:#616E88\
+ --color=fg:#D8DEE9,header:#616E88,info:#81A1C1,pointer:#88C0D0\
+ --color=marker:#88C0D0,fg+:#ECEFF4,prompt:#81A1C1,hl+:#81A1C1\
+ --color=selected-bg:#434C5E\
+ --color=border:#4C566A,label:#D8DEE9"
 fi
 
 # --- Aliases ---
 if command -v eza &>/dev/null; then
-  alias ls='eza --icons --group-directories-first'
-  alias ll='eza --icons -la --group-directories-first'
-  alias lt='eza --icons --tree --level=2'
+  alias ls='eza --group-directories-first'
+  alias ll='eza -la --group-directories-first'
+  alias lt='eza --tree --level=2'
 fi
 
 if command -v bat &>/dev/null; then

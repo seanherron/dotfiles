@@ -48,7 +48,7 @@ defaults write com.apple.finder ShowStatusBar -bool true
 # Default to list view in new windows.
 defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
 # Show POSIX path in the window title bar.
-defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
+defaults write com.apple.finder _FXShowPosixPathInTitle -bool false
 # Search the current folder by default, not the whole machine.
 defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
 # Don't write .DS_Store on network or USB volumes.
@@ -64,7 +64,7 @@ defaults write com.apple.dock autohide -bool true
 defaults write com.apple.dock autohide-delay -float 0
 defaults write com.apple.dock autohide-time-modifier -float 0.2
 defaults write com.apple.dock show-recents -bool false
-defaults write com.apple.dock tilesize -int 36
+defaults write com.apple.dock tilesize -int 48
 defaults write com.apple.dock mineffect -string "scale"
 defaults write com.apple.dock minimize-to-application -bool true
 # Don't rearrange spaces by most-recent-use — keep ordering stable.
@@ -75,7 +75,7 @@ mkdir -p "$HOME/Screenshots"
 defaults write com.apple.screencapture location -string "$HOME/Screenshots"
 defaults write com.apple.screencapture type -string "png"
 defaults write com.apple.screencapture disable-shadow -bool true
-defaults write com.apple.screencapture show-thumbnail -bool false
+defaults write com.apple.screencapture show-thumbnail -bool true
 
 # --- Window manager --------------------------------------------------------
 # Faster window resize / sheet animations.

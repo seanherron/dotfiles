@@ -1,3 +1,1 @@
-# bat configuration — bat reads one CLI flag per line from this file.
-# Catppuccin themes are bundled in bat ≥ 0.25.
---theme="Catppuccin Mocha"
+--theme="Nord"

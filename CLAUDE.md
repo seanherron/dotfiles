@@ -34,8 +34,8 @@ chezmoi run run_onchange_darwin-install-packages.sh.tmpl
 | `dot_zsh_plugins.txt` | `~/.zsh_plugins.txt` | Antidote plugin list (fzf-tab, zsh-autosuggestions, zsh-syntax-highlighting) |
 | `dot_config/starship.toml` | `~/.config/starship.toml` | Starship prompt config |
 | `dot_config/cmux/private_cmux.json` | `~/.config/cmux/cmux.json` | cmux terminal multiplexer config (JSONC format) |
-| `dot_config/lazygit/config.yml` | `~/.config/lazygit/config.yml` | lazygit Catppuccin theme + delta as the pager |
-| `dot_config/btop/btop.conf` | `~/.config/btop/btop.conf` | btop Catppuccin theme + defaults |
+| `dot_config/lazygit/config.yml` | `~/.config/lazygit/config.yml` | lazygit Nord theme + delta as the pager |
+| `dot_config/btop/btop.conf` | `~/.config/btop/btop.conf` | btop Nord theme + defaults |
 | `dot_editorconfig` | `~/.editorconfig` | Global EditorConfig fallback |
 | `.chezmoidata/packages.yaml` | — | Data file: Homebrew brews/casks + Mac App Store apps to install |
 | `run_onchange_darwin-install-packages.sh.tmpl` | — | Script: runs `brew bundle` whenever `packages.yaml` changes |
@@ -48,16 +48,22 @@ The `private_` prefix on `dot_config/cmux/private_cmux.json` tells chezmoi to se
 
 ## Font convention
 
-Primary font: **Berkeley Mono** (paid, installed via `run_onchange_install-berkeley-mono.sh.tmpl` which fetches the .otf files from a 1Password Document item named `Berkeley Mono` — the binary deliberately stays out of this public repo).
+The only font is **Berkeley Mono** (paid, installed via `run_onchange_install-berkeley-mono.sh.tmpl` which fetches the .otf files from a 1Password Document item named `Berkeley Mono` — the binary deliberately stays out of this public repo).
 
-Fallback font: **JetBrainsMono Nerd Font** (cask `font-jetbrains-mono-nerd-font`). Berkeley Mono ships without Nerd Font glyphs, so the fallback both covers fresh machines where Berkeley Mono hasn't been pulled yet AND fills in icon glyphs used by Starship / eza on a per-character basis.
+Nerd Font glyphs are **not used** anywhere in this setup. When adding a new dotfile for an editor or terminal that supports font configuration, use Berkeley Mono alone:
 
-When adding a new dotfile for an editor or terminal that supports font configuration, always declare the fallback chain — never just Berkeley Mono on its own:
+- Editors (CSS-style): `"Berkeley Mono, monospace"`
+- Ghostty: single `font-family = "Berkeley Mono"` line
+- Terminals / other apps: `"Berkeley Mono"`
 
-- Editors (CSS-style, comma-separated): `"Berkeley Mono, JetBrainsMono Nerd Font, monospace"`
-- Ghostty (repeated directive): two `font-family =` lines, Berkeley Mono first
-- Anywhere only one font name is accepted: prefer `"Berkeley Mono"` and document the missing-glyphs caveat
+When configuring tools that output decorative icons by default (e.g. eza's `--icons`, starship module symbols), disable them or replace with plain-text equivalents.
 
 ## Color convention
 
-The default color scheme everywhere is **Catppuccin Mocha**. When adding a new dotfile for anything that supports theming (terminal, editor, prompt, pager, file lister, fuzzy finder, syntax highlighter, etc.), apply the Mocha variant — never Latte/Frappé/Macchiato or another palette. Prefer a built-in theme name (e.g. Ghostty's `"Catppuccin Mocha"`, bat's `"Catppuccin Mocha"`) over hand-rolled hex; fall back to the official Catppuccin port for that tool (https://github.com/catppuccin) when no built-in exists. The hex palette is defined once in `dot_config/starship.toml` under `[palettes.catppuccin_mocha]` — copy from there to keep colors consistent.
+The default color scheme everywhere is **Nord**. When adding a new dotfile for anything that supports theming (terminal, editor, prompt, pager, file lister, fuzzy finder, syntax highlighter, etc.), apply Nord — prefer a built-in theme name (e.g. Ghostty's `"Nord"`, bat's `"Nord"`, btop's `"nord"`) over hand-rolled hex. The full hex palette is defined in `dot_config/starship.toml` under `[palettes.nord]` — copy from there to keep colors consistent.
+
+Nord palette reference:
+- Polar Night (backgrounds): `#2E3440` nord0, `#3B4252` nord1, `#434C5E` nord2, `#4C566A` nord3
+- Snow Storm (foreground): `#D8DEE9` nord4, `#E5E9F0` nord5, `#ECEFF4` nord6
+- Frost (blue/teal): `#8FBCBB` nord7, `#88C0D0` nord8, `#81A1C1` nord9, `#5E81AC` nord10
+- Aurora (accents): `#BF616A` nord11 red, `#D08770` nord12 orange, `#EBCB8B` nord13 yellow, `#A3BE8C` nord14 green, `#B48EAD` nord15 purple

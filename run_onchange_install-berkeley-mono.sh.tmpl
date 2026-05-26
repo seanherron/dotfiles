@@ -62,8 +62,8 @@ fi
 kind="$(file -b "$tmp/payload")"
 case "$kind" in
   *Zip\ archive*|*ZIP\ archive*)
-    # -j strips directory structure inside the zip; -o overwrites silently.
-    unzip -j -o "$tmp/payload" '*.otf' '*.ttf' -d "$FONT_DIR" >/dev/null
+    unzip -j -o "$tmp/payload" -d "$tmp/fonts" >/dev/null
+    find "$tmp/fonts" \( -name '*.otf' -o -name '*.ttf' \) -exec cp {} "$FONT_DIR/" \;
     ;;
   *OpenType*|*TrueType*|*font*)
     cp "$tmp/payload" "$FONT_DIR/BerkeleyMono.otf"

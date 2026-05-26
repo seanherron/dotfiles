@@ -6,7 +6,7 @@ $directory$git_branch$git_status$nodejs$python$rust$golang$docker_context$cmd_du
 $character"""
 
 add_newline = true
-palette = "catppuccin_mocha"
+palette = "nord"
 
 [character]
 success_symbol = "[❯](bold green)"
@@ -14,43 +14,43 @@ error_symbol = "[❯](bold red)"
 vimcmd_symbol = "[❮](bold green)"
 
 [directory]
-style = "bold sapphire"
+style = "bold nord8"
 truncation_length = 3
 truncate_to_repo = true
-read_only = "  "
+read_only = " [ro]"
 
 [git_branch]
-symbol = " "
-style = "bold mauve"
+symbol = ""
+style = "bold nord15"
 
 [git_status]
-style = "bold red"
+style = "bold nord11"
 format = "([\\[$all_status$ahead_behind\\]]($style) )"
 
 [cmd_duration]
 min_time = 2000
 format = "took [$duration]($style) "
-style = "bold yellow"
+style = "bold nord13"
 
 [nodejs]
 format = "via [$symbol($version )]($style)"
-style = "bold green"
+style = "bold nord14"
 
 [python]
 format = "via [$symbol($version )]($style)"
-style = "bold yellow"
+style = "bold nord13"
 
 [rust]
 format = "via [$symbol($version )]($style)"
-style = "bold peach"
+style = "bold nord12"
 
 [golang]
 format = "via [$symbol($version )]($style)"
-style = "bold sky"
+style = "bold nord7"
 
 [docker_context]
 format = "via [$symbol$context]($style) "
-style = "bold blue"
+style = "bold nord10"
 
 [package]
 disabled = true
@@ -64,31 +64,25 @@ disabled = true
 [azure]
 disabled = true
 
-# Catppuccin Mocha palette — https://github.com/catppuccin/starship
-[palettes.catppuccin_mocha]
-rosewater = "#f5e0dc"
-flamingo = "#f2cdcd"
-pink = "#f5c2e7"
-mauve = "#cba6f7"
-red = "#f38ba8"
-maroon = "#eba0ac"
-peach = "#fab387"
-yellow = "#f9e2af"
-green = "#a6e3a1"
-teal = "#94e2d5"
-sky = "#89dceb"
-sapphire = "#74c7ec"
-blue = "#89b4fa"
-lavender = "#b4befe"
-text = "#cdd6f4"
-subtext1 = "#bac2de"
-subtext0 = "#a6adc8"
-overlay2 = "#9399b2"
-overlay1 = "#7f849c"
-overlay0 = "#6c7086"
-surface2 = "#585b70"
-surface1 = "#45475a"
-surface0 = "#313244"
-base = "#1e1e2e"
-mantle = "#181825"
-crust = "#11111b"
+# Nord palette — https://www.nordtheme.com
+[palettes.nord]
+# Polar Night (backgrounds, dark UI)
+nord0 = "#2E3440"
+nord1 = "#3B4252"
+nord2 = "#434C5E"
+nord3 = "#4C566A"
+# Snow Storm (foreground, light text)
+nord4 = "#D8DEE9"
+nord5 = "#E5E9F0"
+nord6 = "#ECEFF4"
+# Frost (blue/teal accent tones)
+nord7 = "#8FBCBB"
+nord8 = "#88C0D0"
+nord9 = "#81A1C1"
+nord10 = "#5E81AC"
+# Aurora (colorful accents)
+nord11 = "#BF616A"
+nord12 = "#D08770"
+nord13 = "#EBCB8B"
+nord14 = "#A3BE8C"
+nord15 = "#B48EAD"

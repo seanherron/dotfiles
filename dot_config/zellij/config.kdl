@@ -1,7 +1,7 @@
 // Zellij — second multiplexer for SSH / server contexts where cmux isn't
 // available locally. Docs: https://zellij.dev/documentation/
 
-theme "catppuccin-mocha"
+theme "nord"
 default_shell "zsh"
 default_layout "compact"
 

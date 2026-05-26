@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//usr/local/share/zsh/site-functions/**)",
+      "Read(//Applications/**)",
+      "Bash(chezmoi managed *)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(ghostty +list-themes)",
+      "Bash(chezmoi apply *)",
+      "Bash(printf '\\\\\\\\uE000')",
+      "Bash(printf '\\\\\\\\uF8FF')",
+      "Bash(grep -r \"[$\\(printf '\\\\\\\\uE000'\\)-$\\(printf '\\\\\\\\uF8FF'\\)]\" /Users/sean/.local/share/chezmoi --include=\"*.toml\" --include=\"*rc\" --include=\"*.json\" --include=\"*.yaml\" --include=\"*.yml\")",
+      "Bash(python3)",
+      "Read(//Users/sean/Library/Fonts/**)",
+      "Bash(fc-list)",
+      "Bash(python3 *)",
+      "Bash(code *)",
+      "Bash(op --version)",
+      "Bash(op whoami *)",
+      "Read(//Users/sean/.vscode/extensions/catppuccin.catppuccin-vsc-3.19.0/**)"
+    ]
+  }
+}

@@ -1,5 +1,4 @@
-# lazygit config — Catppuccin Mocha
-# https://github.com/catppuccin/lazygit
+# lazygit config — Nord
 #
 # On macOS, lazygit defaults to ~/Library/Application Support/lazygit/config.yml.
 # dot_zprofile exports XDG_CONFIG_HOME=$HOME/.config, which makes lazygit read
@@ -9,27 +8,26 @@
 gui:
   theme:
     activeBorderColor:
-      - "#b4befe"  # lavender
+      - "#88C0D0"  # frost/nord8
       - bold
     inactiveBorderColor:
-      - "#a6adc8"  # subtext0
+      - "#4C566A"  # polar night/nord3
     optionsTextColor:
-      - "#89b4fa"  # blue
+      - "#81A1C1"  # frost/nord9
     selectedLineBgColor:
-      - "#313244"  # surface0
+      - "#3B4252"  # polar night/nord1
     cherryPickedCommitBgColor:
-      - "#45475a"  # surface1
+      - "#434C5E"  # polar night/nord2
     cherryPickedCommitFgColor:
-      - "#b4befe"  # lavender
+      - "#88C0D0"  # frost/nord8
     unstagedChangesColor:
-      - "#f38ba8"  # red
+      - "#BF616A"  # aurora red/nord11
     defaultFgColor:
-      - "#cdd6f4"  # text
+      - "#D8DEE9"  # snow storm/nord4
     searchingActiveBorderColor:
-      - "#f9e2af"  # yellow
+      - "#EBCB8B"  # aurora yellow/nord13
   authorColors:
-    "*": "#b4befe"
-  nerdFontsVersion: "3"
+    "*": "#B48EAD"  # aurora purple/nord15
 
 git:
   paging:
