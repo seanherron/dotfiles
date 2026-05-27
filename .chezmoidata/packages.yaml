@@ -48,3 +48,35 @@ packages:
     # Mac App Store apps. Format: '<id>:<App Name>' — find an id with `mas search <name>`.
     # Empty by default; add entries like '497799835:Xcode'.
     mas: []
+  linux:
+    brews:
+    # Core
+    - 'git'
+    - 'zsh'
+    - 'antidote'
+    - 'starship'
+    # Modern CLI replacements
+    - 'fzf'
+    - 'zoxide'
+    - 'eza'
+    - 'bat'
+    - 'fd'
+    - 'ripgrep'
+    - 'dust'
+    - 'procs'
+    - 'sd'
+    # Git
+    - 'git-delta'
+    - 'gh'
+    - 'lazygit'
+    # Shell quality of life
+    - 'atuin'
+    - 'mise'
+    - 'direnv'
+    - 'tealdeer'
+    - 'hyperfine'
+    # System
+    - 'btop'
+    - 'zellij'
+    # 1Password CLI (for chezmoi templates)
+    - '1password-cli'

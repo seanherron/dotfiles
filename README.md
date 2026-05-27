@@ -1,27 +1,49 @@
 # dotfiles
 
-macOS shell + editor + terminal config, managed by [chezmoi](https://www.chezmoi.io/).
+Shell + editor + terminal config for macOS and Linux, managed by [chezmoi](https://www.chezmoi.io/).
 
-Themed end-to-end in [Catppuccin Mocha](https://catppuccin.com/) with [Berkeley Mono](https://berkeleygraphics.com/typefaces/berkeley-mono/) as the primary font (JetBrainsMono Nerd Font fallback for icon glyphs). Git commits are signed with an SSH key stored in 1Password.
+Themed end-to-end in [Nord](https://www.nordtheme.com/) with [Berkeley Mono](https://berkeleygraphics.com/typefaces/berkeley-mono/) as the font. Git commits are signed with an SSH key stored in 1Password.
 
 ## Quick start
 
-On a fresh Mac, with [Homebrew](https://brew.sh) and the GitHub CLI already installed:
+### macOS
+
+With [Homebrew](https://brew.sh) already installed:
 
 ```bash
 brew install chezmoi
 chezmoi init --apply seanherron
 ```
 
+### Linux (remote server)
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+brew install chezmoi
+chezmoi init --apply seanherron
+```
+
+Before running `chezmoi init`, authenticate the 1Password CLI (required to render `~/.claude/settings.json`):
+
+```bash
+# Option A — service account (recommended for unattended servers):
+export OP_SERVICE_ACCOUNT_TOKEN=<token>   # create at 1password.com → Integrations → Service Accounts
+
+# Option B — interactive sign-in (caches a session token on disk):
+op signin
+```
+
 `chezmoi init` will prompt for:
 
-| Prompt           | What it's for                                                                 |
-| ---------------- | ----------------------------------------------------------------------------- |
-| `profile`        | `personal` or `work` — informational, available to templates as `{{ .profile }}` |
-| `name`           | Git author name (`user.name`)                                                 |
-| `email`          | Git author email + principal in `~/.config/git/allowed_signers`               |
-| `signingKey`     | Full SSH public key line (`ssh-ed25519 AAAA... comment`) from 1Password       |
-| `githubUser`     | Used in `~/.ssh/config` and the dev-box stub                                  |
+| Prompt              | What it's for                                                                    |
+| ------------------- | -------------------------------------------------------------------------------- |
+| `profile`           | `personal` or `work` — informational, available to templates as `{{ .profile }}` |
+| `name`              | Git author name (`user.name`)                                                    |
+| `email`             | Git author email + principal in `~/.config/git/allowed_signers`                  |
+| `signingKey`        | Full SSH public key line (`ssh-ed25519 AAAA... comment`) from 1Password          |
+| `githubUser`        | Used in `~/.ssh/config` and the dev-box stub                                     |
+| `onepasswordVault`  | 1Password vault that holds the "Claude Code - Disabled MCP Servers" item (defaults to `Personal`) |
 
 Answers persist to `~/.config/chezmoi/chezmoi.toml`. `chezmoi apply` later won't re-prompt.
 
@@ -48,9 +70,10 @@ Answers persist to `~/.config/chezmoi/chezmoi.toml`. `chezmoi apply` later won't
 | `Library/Application Support/Cursor/...`              | same paths under `~`                                   | Cursor — same settings/keybindings minus the Claude Code extension binding      |
 | `.chezmoidata/packages.yaml`                          | —                                                      | Homebrew brews + casks to install (consumed by the package script)              |
 | `.chezmoi.toml.tmpl`                                  | rendered once into `~/.config/chezmoi/chezmoi.toml`    | The init prompts above                                                          |
-| `run_onchange_darwin-install-packages.sh.tmpl`        | runs on `chezmoi apply` when its hash changes          | `brew bundle` from `packages.yaml`                                              |
-| `run_onchange_install-vscode-extensions.sh.tmpl`      | same                                                   | Installs Claude Code, 1Password, GitLens, GitHub PRs, Error Lens, EditorConfig, spell checker |
-| `run_onchange_install-cursor-extensions.sh.tmpl`      | same                                                   | Same set, minus the Claude Code extension                                       |
+| `run_onchange_darwin-install-packages.sh.tmpl`        | runs on `chezmoi apply` when its hash changes (macOS only) | `brew bundle` from `packages.yaml`                                         |
+| `run_onchange_linux-install-packages.sh.tmpl`         | same (Linux only)                                      | Installs Homebrew if absent, then `brew install`s the `linux.brews` list from `packages.yaml` |
+| `run_onchange_install-vscode-extensions.sh.tmpl`      | same (macOS only)                                      | Installs Claude Code, 1Password, EditorConfig extensions                        |
+| `run_onchange_install-cursor-extensions.sh.tmpl`      | same (macOS only)                                      | Same set for Cursor                                                             |
 | `run_onchange_install-berkeley-mono.sh.tmpl`          | same                                                   | Fetches Berkeley Mono from a 1Password Document and installs to `~/Library/Fonts/` |
 | `CLAUDE.md`                                           | not deployed (in `.chezmoiignore`)                     | Project guidance for the Claude Code AI                                         |
 | `README.md`                                           | not deployed                                           | This file                                                                       |
@@ -298,6 +321,53 @@ Berkeley Mono is a paid font; the binary deliberately stays out of this public r
 **Per machine:** `chezmoi apply` invokes `run_onchange_install-berkeley-mono.sh.tmpl`, which uses `op` to fetch the document, auto-detects whether it's a zip or a single font file, and unpacks the .otf/.ttf into `~/Library/Fonts/`. macOS picks them up immediately.
 
 The script is a no-op (exits 0 with an explanation) when Berkeley Mono is already installed, when `op` isn't installed yet, or when you haven't signed into 1Password yet. The font-family fallback chain means everything still renders in JetBrainsMono Nerd Font in the meantime.
+
+## Linux / remote server
+
+The dotfiles are designed to work on headless Linux servers (tested on Ubuntu). Key differences from macOS:
+
+**What runs on Linux:**
+- All CLI tools (starship, atuin, mise, zellij, bat, eza, ripgrep, etc.) via Homebrew on Linux
+- `run_onchange_linux-install-packages.sh.tmpl` — installs Homebrew if missing, then all tools from `packages.yaml` → `linux.brews`
+- All shell config (`dot_zprofile`, `dot_zshrc`) — `dot_zprofile` checks `/home/linuxbrew/.linuxbrew` in addition to macOS Homebrew paths
+
+**What is skipped on Linux (guarded by `{{ if eq .chezmoi.os "darwin" }}`):**
+- `run_onchange_darwin-install-packages.sh.tmpl` — macOS Homebrew bundle
+- `run_onchange_darwin-defaults.sh.tmpl` — macOS system defaults
+- `run_onchange_install-berkeley-mono.sh.tmpl` — font install to `~/Library/Fonts/`
+- `run_onchange_install-cursor-extensions.sh.tmpl` — Cursor is GUI-only
+- `run_onchange_install-vscode-extensions.sh.tmpl` — VS Code is GUI-only
+
+### 1Password on a headless server
+
+`chezmoi apply` calls `onepasswordRead` to render `~/.claude/settings.json`. The `op` CLI must be authenticated before running it. Two options:
+
+**Service account (recommended for servers):** Create a service account at 1Password.com → Integrations → Service Accounts with read access to the vault named in `onepasswordVault`. Set the token before applying:
+
+```bash
+export OP_SERVICE_ACCOUNT_TOKEN=<token>
+chezmoi apply
+```
+
+To persist across sessions, add it to `~/.profile` or your systemd environment.
+
+**Interactive sign-in (one-time over SSH):** Run `op signin` once — it caches a session token that survives for 30 days. Subsequent `chezmoi apply` runs work without re-authenticating until the token expires.
+
+```bash
+op signin
+chezmoi apply
+```
+
+### Git signing on a remote server
+
+SSH agent forwarding handles commit signing without 1Password installed on the server. In your local `~/.ssh/config`:
+
+```
+Host my-server
+  ForwardAgent yes
+```
+
+The gitconfig template detects that 1Password's `op-ssh-sign` binary is absent and omits `gpg.ssh.program`, so git falls back to `ssh-keygen` using `$SSH_AUTH_SOCK` — which is your forwarded local 1Password agent. Touch ID fires on your laptop, not the server.
 
 ## Troubleshooting
 
