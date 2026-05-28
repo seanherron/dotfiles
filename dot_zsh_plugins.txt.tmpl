@@ -1,6 +1,11 @@
 # Load order matters: fzf-tab must come before zsh-autosuggestions and
 # zsh-syntax-highlighting so it can hook into the completion system before
 # they wrap zle widgets.
+#
+# zsh-autosuggestions is skipped on Linux because its widget wrapping causes
+# doubled input on Linux SSH terminals (typing "ls" produces "lssls").
 Aloxaf/fzf-tab
+{{ if ne .chezmoi.os "linux" -}}
 zsh-users/zsh-autosuggestions
+{{ end -}}
 zsh-users/zsh-syntax-highlighting
