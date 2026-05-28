@@ -2,10 +2,11 @@
 # zsh-syntax-highlighting so it can hook into the completion system before
 # they wrap zle widgets.
 #
-# zsh-autosuggestions is skipped on Linux because its widget wrapping causes
-# doubled input on Linux SSH terminals (typing "ls" produces "lssls").
+# zsh-syntax-highlighting is skipped on Linux because its self-insert /
+# bracketed-paste widget wrapping causes doubled input on Linux SSH terminals
+# (typing "ls" produces "lssls"). macOS terminals don't trigger this.
 Aloxaf/fzf-tab
-{{ if ne .chezmoi.os "linux" -}}
 zsh-users/zsh-autosuggestions
-{{ end -}}
+{{ if ne .chezmoi.os "linux" -}}
 zsh-users/zsh-syntax-highlighting
+{{ end -}}
