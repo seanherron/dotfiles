@@ -6,6 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A [chezmoi](https://www.chezmoi.io/) dotfiles repo managing macOS shell configuration. chezmoi maps files with `dot_` prefixes to their `~/.` equivalents (e.g. `dot_zshrc` → `~/.zshrc`), and `.tmpl` files are Go templates rendered with data from `.chezmoidata/`.
 
+## Bootstrap (first-time setup)
+
+```bash
+# macOS / Linux — installs chezmoi to ~/.local/bin then applies dotfiles
+sh -c "$(curl -fsLS https://get.chezmoi.io)" -- -b ~/.local/bin init --apply seanherron
+```
+
+The `-b ~/.local/bin` flag is required: without it the installer defaults to `~/bin`, which isn't on PATH until after the dotfiles are applied (chicken-and-egg).
+
 ## Key commands
 
 ```bash

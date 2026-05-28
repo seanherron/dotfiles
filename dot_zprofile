@@ -8,7 +8,8 @@ elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
 fi
 
 # User-local binaries (e.g. pipx, cargo install --root ~/.local, chezmoi native install)
-export PATH="$HOME/.local/bin:$PATH"
+# ~/bin is included because some installers (e.g. the chezmoi bootstrap script) default to it.
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 
 # Standardize XDG paths so tools that only respect the env var (lazygit on
 # macOS, btop on first run, etc.) land alongside everything else in ~/.config.
