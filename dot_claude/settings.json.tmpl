@@ -1,6 +1,10 @@
+{{- $disabledMcpServers := "[]" -}}
+{{- if lookPath "op" -}}
+{{- $disabledMcpServers = onepasswordRead (printf "op://%s/Claude Code - Disabled MCP Servers/notesPlain" .onepasswordVault) -}}
+{{- end -}}
 {
   "model": "sonnet",
   "effortLevel": "medium",
   "defaultMode": "auto",
-  "disabledMcpServers": {{ onepasswordRead (printf "op://%s/Claude Code - Disabled MCP Servers/notesPlain" .onepasswordVault) }}
+  "disabledMcpServers": {{ $disabledMcpServers }}
 }
