@@ -44,6 +44,11 @@ if command -v fzf &>/dev/null; then
 fi
 
 # --- Plugins (Antidote) ---
+# On Linux, zsh-autosuggestions' async mode (zle -Fw fd watching) fires its
+# callback mid-keypress and causes every character to be inserted twice.
+# Disable async before antidote sources the plugin.
+[[ "$(uname -s)" == Linux ]] && ZSH_AUTOSUGGEST_USE_ASYNC=false
+
 # zsh-syntax-highlighting must be the last plugin loaded (it wraps all ZLE
 # widgets). The plugins file lists it last; nothing should source ZLE-touching
 # code after this block.
