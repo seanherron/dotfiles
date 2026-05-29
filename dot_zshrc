@@ -27,7 +27,17 @@ zstyle ':fzf-tab:*' switch-group '<' '>'
 # --- Options ---
 setopt AUTO_CD CORRECT NO_BEEP
 
+# --- Keybindings ---
+# Force emacs mode. On macOS zsh defaults to emacs, but on Linux it can pick
+# viins (vi insert) if EDITOR/VISUAL is vi-like — and in viins mode backspace
+# only deletes inside the current insert region, not across the prompt.
+bindkey -e
+
 # --- fzf shell integration ---
+# Must be initialized before antidote plugins so that zsh-syntax-highlighting
+# (loaded last by antidote, macOS only) wraps ZLE widgets after fzf, not
+# before. Loading fzf --zsh afterward breaks the self-insert widget chain on
+# Linux, causing doubled input.
 if command -v fzf &>/dev/null; then
   source <(fzf --zsh)
   # Nord colors
