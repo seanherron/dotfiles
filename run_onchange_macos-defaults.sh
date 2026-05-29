@@ -1,4 +1,3 @@
-{{ if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
 set -euo pipefail
 
@@ -104,4 +103,3 @@ defaults write NSGlobalDomain NSQuitAlwaysKeepsWindows -bool false
 killall Dock Finder SystemUIServer cfprefsd 2>/dev/null || true
 
 echo "macOS defaults applied."
-{{ end -}}

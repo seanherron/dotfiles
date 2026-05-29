@@ -1,4 +1,3 @@
-{{ if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
 # Install Berkeley Mono (a paid font) from 1Password into ~/Library/Fonts/.
 # Re-runs whenever this script's rendered content changes.
@@ -76,4 +75,3 @@ case "$kind" in
 esac
 
 echo "Berkeley Mono installed to $FONT_DIR"
-{{ end -}}

@@ -1,37 +1,25 @@
 # dotfiles
 
-Shell + editor + terminal config for macOS and Linux, managed by [chezmoi](https://www.chezmoi.io/).
+Shell + editor + terminal config, managed by [chezmoi](https://www.chezmoi.io/), across two profiles:
 
-Themed end-to-end in [Nord](https://www.nordtheme.com/) with [Berkeley Mono](https://berkeleygraphics.com/typefaces/berkeley-mono/) as the font. Git commits are signed with an SSH key stored in 1Password.
+- **macOS** — the full workstation setup: GUI app configs, Homebrew casks, Mac App Store apps, macOS defaults, fonts.
+- **Linux** — a lighter subset for remote servers reached over SSH: the same CLI toolchain via Homebrew-on-Linux, no GUI apps or macOS-specific bits.
+
+The profile is selected automatically from `chezmoi.os` — see [Two profiles](#two-profiles) below. Themed end-to-end in [Nord](https://www.nordtheme.com/) with [Berkeley Mono](https://berkeleygraphics.com/typefaces/berkeley-mono/) as the font. Git commits are signed with an SSH key stored in 1Password.
 
 ## Quick start
 
-### macOS
-
-With [Homebrew](https://brew.sh) already installed:
+**macOS** (with [Homebrew](https://brew.sh) already installed):
 
 ```bash
 brew install chezmoi
 chezmoi init --apply seanherron
 ```
 
-### Linux (remote server)
+**Linux remote server** (chezmoi installs itself, then bootstraps Homebrew-on-Linux on first apply):
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-brew install chezmoi
-chezmoi init --apply seanherron
-```
-
-Before running `chezmoi init`, authenticate the 1Password CLI (required to render `~/.claude/settings.json`):
-
-```bash
-# Option A — service account (recommended for unattended servers):
-export OP_SERVICE_ACCOUNT_TOKEN=<token>   # create at 1password.com → Integrations → Service Accounts
-
-# Option B — interactive sign-in (caches a session token on disk):
-op signin
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply seanherron
 ```
 
 `chezmoi init` will prompt for:
@@ -47,6 +35,21 @@ op signin
 
 Answers persist to `~/.config/chezmoi/chezmoi.toml`. `chezmoi apply` later won't re-prompt.
 
+## Two profiles
+
+Everything is driven off `chezmoi.os` (`darwin` vs `linux`), so the same `chezmoi init` works on both:
+
+| Concern | macOS | Linux |
+| ------- | ----- | ----- |
+| Package manager | Homebrew (preinstalled) | Homebrew-on-Linux, bootstrapped on first apply |
+| Packages | `brews` + `darwinBrews` + `casks` + `mas` | `brews` only (cross-platform CLI tools) |
+| GUI configs (VSCode/Cursor, Ghostty, cmux) | deployed | ignored |
+| Fonts, macOS defaults, editor-extension installers | run | ignored |
+| `UseKeychain` in `~/.ssh/config` | set | omitted (Apple-only; errors on Linux) |
+| Git signing | 1Password `op-ssh-sign` | falls back to `ssh-keygen` via a forwarded 1Password agent |
+
+The macOS-only files are excluded on Linux by a templated `.chezmoiignore`. Files that must differ per-OS (`~/.ssh/config`, the package script) branch on `.chezmoi.os` inside their `.tmpl`; the rest is either cross-platform or self-guards at runtime (`dot_zprofile` probes every Homebrew prefix; `dot_zshrc`'s 1Password socket path simply doesn't exist on Linux).
+
 ## What's in here
 
 | Path                                                  | Maps to                                                | Purpose                                                                         |
@@ -54,7 +57,7 @@ Answers persist to `~/.config/chezmoi/chezmoi.toml`. `chezmoi apply` later won't
 | `dot_zprofile`                                        | `~/.zprofile`                                          | Login shell — Homebrew PATH                                                     |
 | `dot_zshrc`                                           | `~/.zshrc`                                             | Interactive shell — history, completions, plugins, aliases, 1Password SSH sock  |
 | `dot_zsh_plugins.txt`                                 | `~/.zsh_plugins.txt`                                   | [Antidote](https://getantidote.github.io/) plugin list                          |
-| `dot_gitconfig.tmpl`                                  | `~/.gitconfig`                                         | Git identity + SSH commit signing (1Password locally, ssh-keygen on remotes)    |
+| `dot_gitconfig.tmpl`                                  | `~/.gitconfig`                                         | Git identity + SSH commit signing via 1Password's op-ssh-sign                   |
 | `dot_config/git/allowed_signers.tmpl`                 | `~/.config/git/allowed_signers`                        | Lets `git log --show-signature` verify your own commits                         |
 | `dot_config/starship.toml`                            | `~/.config/starship.toml`                              | Starship prompt — two-line, Catppuccin Mocha palette                            |
 | `dot_config/ghostty/config`                           | `~/.config/ghostty/config`                             | Ghostty terminal — Berkeley Mono + JetBrainsMono Nerd Font fallback             |
@@ -68,13 +71,13 @@ Answers persist to `~/.config/chezmoi/chezmoi.toml`. `chezmoi apply` later won't
 | `Library/Application Support/Code/User/settings.json` | same path under `~`                                    | VSCode — Claude Code panel layout, Catppuccin, format-on-save                   |
 | `Library/Application Support/Code/User/keybindings.json` | same path under `~`                                 | VSCode — `cmd+j` editor ↔ Claude panel ping-pong                                |
 | `Library/Application Support/Cursor/...`              | same paths under `~`                                   | Cursor — same settings/keybindings minus the Claude Code extension binding      |
-| `.chezmoidata/packages.yaml`                          | —                                                      | Homebrew brews + casks to install (consumed by the package script)              |
+| `.chezmoidata/packages.yaml`                          | —                                                      | `brews` (both OSes) + `darwinBrews` + `casks` + `mas` (macOS-only)              |
 | `.chezmoi.toml.tmpl`                                  | rendered once into `~/.config/chezmoi/chezmoi.toml`    | The init prompts above                                                          |
-| `run_onchange_darwin-install-packages.sh.tmpl`        | runs on `chezmoi apply` when its hash changes (macOS only) | `brew bundle` from `packages.yaml`                                         |
-| `run_onchange_linux-install-packages.sh.tmpl`         | same (Linux only)                                      | Installs Homebrew if absent, then `brew install`s the `linux.brews` list from `packages.yaml` |
-| `run_onchange_install-vscode-extensions.sh.tmpl`      | same (macOS only)                                      | Installs Claude Code, 1Password, EditorConfig extensions                        |
-| `run_onchange_install-cursor-extensions.sh.tmpl`      | same (macOS only)                                      | Same set for Cursor                                                             |
-| `run_onchange_install-berkeley-mono.sh.tmpl`          | same                                                   | Fetches Berkeley Mono from a 1Password Document and installs to `~/Library/Fonts/` |
+| `run_onchange_install-packages.sh.tmpl`               | runs on `chezmoi apply` when its hash changes          | `brew bundle` from `packages.yaml`                                              |
+| `run_onchange_install-vscode-extensions.sh`           | same                                                   | Installs Claude Code, 1Password, EditorConfig extensions                        |
+| `run_onchange_install-cursor-extensions.sh`           | same                                                   | Same set for Cursor                                                             |
+| `run_onchange_install-berkeley-mono.sh`               | same                                                   | Fetches Berkeley Mono from a 1Password Document and installs to `~/Library/Fonts/` |
+| `run_onchange_macos-defaults.sh`                      | same                                                   | macOS system defaults via `defaults write`                                      |
 | `CLAUDE.md`                                           | not deployed (in `.chezmoiignore`)                     | Project guidance for the Claude Code AI                                         |
 | `README.md`                                           | not deployed                                           | This file                                                                       |
 
@@ -153,7 +156,7 @@ The cache lives at `~/.cache/tealdeer`; `tldr --update` is the only maintenance.
 
 ### mas — Mac App Store CLI
 
-`mas` lets you put App Store apps into the same `packages.yaml` flow as brews and casks. The install script (`run_onchange_darwin-install-packages.sh.tmpl`) renders each entry as a Brewfile `mas` line.
+`mas` lets you put App Store apps into the same `packages.yaml` flow as brews and casks. The install script (`run_onchange_install-packages.sh.tmpl`) renders each entry as a Brewfile `mas` line.
 
 ```bash
 mas search Xcode                  # find the numeric ID (first column)
@@ -270,7 +273,7 @@ Reports mean, min/max, σ, and tells you which is faster with a confidence ratio
 
 ### GNU coreutils + gnu-sed on macOS
 
-`dot_zprofile` prepends `coreutils/libexec/gnubin` and `gnu-sed/libexec/gnubin` to PATH so `ls`, `date`, `sed`, etc. behave like Linux without the `g`-prefix dance.
+`dot_zprofile` prepends `coreutils/libexec/gnubin` and `gnu-sed/libexec/gnubin` to PATH so `ls`, `date`, `sed`, etc. behave like the GNU versions without the `g`-prefix dance.
 
 ```bash
 date -d 'next friday'             # GNU date: relative-time parsing
@@ -288,10 +291,7 @@ Projects with their own `.editorconfig` win — this is just the floor.
 
 ## SSH + git signing
 
-Commit signing uses an SSH key kept in 1Password's vault. The flow:
-
-- **Locally** (1Password app installed): `~/.gitconfig` sets `gpg.ssh.program` to `/Applications/1Password.app/Contents/MacOS/op-ssh-sign`. Every `git commit` triggers a Touch ID prompt and signs without the key ever touching disk.
-- **Remote dev box** (no 1Password installed, but you SSH'd in with `ForwardAgent yes`): the gitconfig template omits `gpg.ssh.program`, so git falls back to plain `ssh-keygen` which uses `$SSH_AUTH_SOCK`. That socket is your forwarded local 1Password agent — Touch ID still fires on your laptop.
+Commit signing uses an SSH key kept in 1Password's vault. `~/.gitconfig` sets `gpg.ssh.program` to `/Applications/1Password.app/Contents/MacOS/op-ssh-sign`. Every `git commit` triggers a Touch ID prompt and signs without the key ever touching disk.
 
 `~/.ssh/config` keeps `ForwardAgent no` globally so a compromised remote can't sign as you. The file contains a commented `Host my-dev-box` block to copy-paste for trusted dev servers only.
 
@@ -322,53 +322,6 @@ Berkeley Mono is a paid font; the binary deliberately stays out of this public r
 
 The script is a no-op (exits 0 with an explanation) when Berkeley Mono is already installed, when `op` isn't installed yet, or when you haven't signed into 1Password yet. The font-family fallback chain means everything still renders in JetBrainsMono Nerd Font in the meantime.
 
-## Linux / remote server
-
-The dotfiles are designed to work on headless Linux servers (tested on Ubuntu). Key differences from macOS:
-
-**What runs on Linux:**
-- All CLI tools (starship, atuin, mise, zellij, bat, eza, ripgrep, etc.) via Homebrew on Linux
-- `run_onchange_linux-install-packages.sh.tmpl` — installs Homebrew if missing, then all tools from `packages.yaml` → `linux.brews`
-- All shell config (`dot_zprofile`, `dot_zshrc`) — `dot_zprofile` checks `/home/linuxbrew/.linuxbrew` in addition to macOS Homebrew paths
-
-**What is skipped on Linux (guarded by `{{ if eq .chezmoi.os "darwin" }}`):**
-- `run_onchange_darwin-install-packages.sh.tmpl` — macOS Homebrew bundle
-- `run_onchange_darwin-defaults.sh.tmpl` — macOS system defaults
-- `run_onchange_install-berkeley-mono.sh.tmpl` — font install to `~/Library/Fonts/`
-- `run_onchange_install-cursor-extensions.sh.tmpl` — Cursor is GUI-only
-- `run_onchange_install-vscode-extensions.sh.tmpl` — VS Code is GUI-only
-
-### 1Password on a headless server
-
-`chezmoi apply` calls `onepasswordRead` to render `~/.claude/settings.json`. The `op` CLI must be authenticated before running it. Two options:
-
-**Service account (recommended for servers):** Create a service account at 1Password.com → Integrations → Service Accounts with read access to the vault named in `onepasswordVault`. Set the token before applying:
-
-```bash
-export OP_SERVICE_ACCOUNT_TOKEN=<token>
-chezmoi apply
-```
-
-To persist across sessions, add it to `~/.profile` or your systemd environment.
-
-**Interactive sign-in (one-time over SSH):** Run `op signin` once — it caches a session token that survives for 30 days. Subsequent `chezmoi apply` runs work without re-authenticating until the token expires.
-
-```bash
-op signin
-chezmoi apply
-```
-
-### Git signing on a remote server
-
-SSH agent forwarding handles commit signing without 1Password installed on the server. In your local `~/.ssh/config`:
-
-```
-Host my-server
-  ForwardAgent yes
-```
-
-The gitconfig template detects that 1Password's `op-ssh-sign` binary is absent and omits `gpg.ssh.program`, so git falls back to `ssh-keygen` using `$SSH_AUTH_SOCK` — which is your forwarded local 1Password agent. Touch ID fires on your laptop, not the server.
-
 ## Troubleshooting
 
 ### Berkeley Mono didn't install — how do I re-run the script?
@@ -394,7 +347,6 @@ gsign
 
 - Empty `ssh-add -L` output → 1Password's SSH agent isn't running. Open 1Password → **Settings → Developer** → enable **Use the SSH agent**, then quit and reopen 1Password.
 - `signingkey` set but a different key appears in `ssh-add -L` → you pasted the wrong public key during `chezmoi init`. Re-run `chezmoi init --force` and re-paste from 1Password.
-- Commits sign locally but not on a remote dev box → confirm your SSH connection was made with `ForwardAgent yes` (`grep -A3 "Host <name>" ~/.ssh/config`), and that the remote's `~/.gitconfig` does **not** set `gpg.ssh.program` (it should fall through to ssh-keygen, which uses the forwarded socket).
 
 ### VSCode extensions didn't install
 

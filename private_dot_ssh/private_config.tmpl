@@ -16,7 +16,7 @@ Host *
 
     # Add forwarded keys to the agent on demand.
     AddKeysToAgent yes
-{{- if and (eq .chezmoi.os "darwin") (stat $opAgentSock) }}
+{{- if stat $opAgentSock }}
 
     # 1Password SSH agent: keys live in the vault, every use prompts Touch ID.
     IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
@@ -32,7 +32,9 @@ Host *
 Host github.com
     HostName github.com
     User git
+{{- if eq .chezmoi.os "darwin" }}
     UseKeychain yes
+{{- end }}
 {{ end }}
 # --- Trusted dev boxes -----------------------------------------------------
 # Copy this block, set HostName + User, and uncomment to allow agent

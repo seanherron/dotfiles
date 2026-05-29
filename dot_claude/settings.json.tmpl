@@ -1,5 +1,5 @@
 {{- $disabledMcpServers := "[]" -}}
-{{- if and (eq .chezmoi.os "darwin") (lookPath "op") -}}
+{{- if lookPath "op" -}}
 {{- $disabledMcpServers = onepasswordRead (printf "op://%s/Claude Code - Disabled MCP Servers/notesPlain" .onepasswordVault) -}}
 {{- end -}}
 {

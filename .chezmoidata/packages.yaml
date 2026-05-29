@@ -1,82 +1,52 @@
 packages:
-  darwin:
-    brews:
-    # Core
-    - 'git'
-    - 'zsh'
-    - 'antidote'
-    - 'starship'
-    # Modern CLI replacements
-    - 'fzf'
-    - 'zoxide'
-    - 'eza'
-    - 'bat'
-    - 'fd'
-    - 'ripgrep'
-    - 'dust'      # better `du`
-    - 'procs'     # better `ps`
-    - 'sd'        # better `sed`
-    # Git
-    - 'git-delta' # syntax-highlighted diffs, wired into ~/.gitconfig
-    - 'gh'        # GitHub CLI
-    - 'lazygit'   # TUI for git
-    # Shell quality of life
-    - 'atuin'     # searchable shell history (Ctrl+R)
-    - 'mise'      # universal language/tool version manager
-    - 'direnv'    # per-directory env vars
-    - 'tealdeer'  # `tldr` — practical man-page examples
-    - 'hyperfine' # command-line benchmarking
-    # System
-    - 'btop'      # prettier `htop`
-    - 'mas'       # Mac App Store CLI (consumed by `mas` section below)
-    - 'zellij'    # terminal multiplexer (portable; for SSH/server use where cmux isn't available)
-    # GNU tools on macOS (PATH set in dot_zprofile to make them unprefixed)
-    - 'coreutils'
-    - 'gnu-sed'
-    casks:
-    - '1password'
-    - '1password-cli'
-    - 'claude'
-    - 'claude-code'
-    - 'chatgpt'
-    - 'codex'
-    - 'cursor'
-    - 'visual-studio-code'
-    - 'google-chrome'
-    - 'cmux'
-    - 'ghostty'
-    # Mac App Store apps. Format: '<id>:<App Name>' — find an id with `mas search <name>`.
-    # Empty by default; add entries like '497799835:Xcode'.
-    mas: []
-  linux:
-    brews:
-    # Core
-    - 'git'
-    - 'zsh'
-    - 'antidote'
-    - 'starship'
-    # Modern CLI replacements
-    - 'fzf'
-    - 'zoxide'
-    - 'eza'
-    - 'bat'
-    - 'fd'
-    - 'ripgrep'
-    - 'dust'
-    - 'procs'
-    - 'sd'
-    # Git
-    - 'git-delta'
-    - 'gh'
-    - 'lazygit'
-    # Shell quality of life
-    - 'atuin'
-    - 'mise'
-    - 'direnv'
-    - 'tealdeer'
-    - 'hyperfine'
-    # System
-    - 'btop'
-    - 'zellij'
-    # 1Password CLI (for chezmoi templates)
-    - '1password-cli'
+  brews:
+  # Core
+  - 'git'
+  - 'zsh'
+  - 'antidote'
+  - 'starship'
+  # Modern CLI replacements
+  - 'fzf'
+  - 'zoxide'
+  - 'eza'
+  - 'bat'
+  - 'fd'
+  - 'ripgrep'
+  - 'dust'      # better `du`
+  - 'procs'     # better `ps`
+  - 'sd'        # better `sed`
+  # Git
+  - 'git-delta' # syntax-highlighted diffs, wired into ~/.gitconfig
+  - 'gh'        # GitHub CLI
+  - 'lazygit'   # TUI for git
+  # Shell quality of life
+  - 'atuin'     # searchable shell history (Ctrl+R)
+  - 'mise'      # universal language/tool version manager
+  - 'direnv'    # per-directory env vars
+  - 'tealdeer'  # `tldr` — practical man-page examples
+  - 'hyperfine' # command-line benchmarking
+  # System
+  - 'btop'      # prettier `htop`
+  - 'zellij'    # terminal multiplexer (portable; for SSH/server use where cmux isn't available)
+  # macOS-only brews. Installed on darwin only (see run_onchange_install-packages.sh.tmpl).
+  darwinBrews:
+  - 'mas'       # Mac App Store CLI (consumed by `mas` section below)
+  # GNU tools on macOS (PATH set in dot_zprofile to make them unprefixed).
+  # Linux already ships GNU coreutils/sed, so these are darwin-only.
+  - 'coreutils'
+  - 'gnu-sed'
+  casks:
+  - '1password'
+  - '1password-cli'
+  - 'claude'
+  - 'claude-code'
+  - 'chatgpt'
+  - 'codex'
+  - 'cursor'
+  - 'visual-studio-code'
+  - 'google-chrome'
+  - 'cmux'
+  - 'ghostty'
+  # Mac App Store apps. Format: '<id>:<App Name>' — find an id with `mas search <name>`.
+  # Empty by default; add entries like '497799835:Xcode'.
+  mas: []

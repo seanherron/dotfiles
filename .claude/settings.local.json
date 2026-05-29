@@ -20,7 +20,11 @@
       "Read(//Users/sean/.vscode/extensions/catppuccin.catppuccin-vsc-3.19.0/**)",
       "Read(//Users/sean.herron/.config/chezmoi/**)",
       "Read(//Users/sean.herron/**)",
-      "Bash(claude mcp *)"
+      "Bash(claude mcp *)",
+      "Bash(git mv *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }

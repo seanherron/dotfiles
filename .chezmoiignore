@@ -1,2 +1,15 @@
 CLAUDE.md
 README.md
+{{ if ne .chezmoi.os "darwin" }}
+# --- macOS-only: never deploy these on Linux remote servers ----------------
+# GUI editor settings (wrong path on Linux — these map under ~/Library).
+Library
+# GUI terminal emulators / Mac apps.
+.config/ghostty
+.config/cmux
+# macOS-only one-shot scripts.
+run_onchange_install-berkeley-mono.sh
+run_onchange_install-cursor-extensions.sh
+run_onchange_install-vscode-extensions.sh
+run_onchange_macos-defaults.sh
+{{ end }}

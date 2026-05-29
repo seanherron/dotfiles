@@ -4,16 +4,39 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A [chezmoi](https://www.chezmoi.io/) dotfiles repo managing macOS shell configuration. chezmoi maps files with `dot_` prefixes to their `~/.` equivalents (e.g. `dot_zshrc` → `~/.zshrc`), and `.tmpl` files are Go templates rendered with data from `.chezmoidata/`.
+A [chezmoi](https://www.chezmoi.io/) dotfiles repo managing shell configuration on **two profiles**:
+
+- **macOS** (primary workstation) — the full setup: GUI app configs, Homebrew casks, Mac App Store apps, macOS defaults, fonts.
+- **Linux** (remote servers reached over SSH) — a lighter subset: the same CLI toolchain via Homebrew-on-Linux (linuxbrew), but no GUI apps, no fonts, no macOS defaults.
+
+chezmoi maps files with `dot_` prefixes to their `~/.` equivalents (e.g. `dot_zshrc` → `~/.zshrc`), and `.tmpl` files are Go templates rendered with data from `.chezmoidata/`.
+
+### How the two profiles are split
+
+The split is driven entirely by `{{ "{{" }} .chezmoi.os {{ "}}" }}` (`"darwin"` vs `"linux"`):
+
+- **`.chezmoiignore`** is a template. On non-darwin it ignores the macOS-only artifacts (`Library` editor settings, `.config/ghostty`, `.config/cmux`, the font/extension installers, and `run_onchange_macos-defaults.sh`), so they never deploy to Linux.
+- **`run_onchange_install-packages.sh.tmpl`** branches on OS: macOS installs `brews` + `darwinBrews` + `casks` + `mas` (with a sudo keep-alive for casks); Linux bootstraps Homebrew-on-Linux if missing, then installs the cross-platform `brews` only.
+- **`private_dot_ssh/private_config.tmpl`** gates the Apple-only `UseKeychain` directive behind darwin (it errors out on Linux ssh).
+- **`dot_zprofile`** locates Homebrew across Apple Silicon, Intel, and linuxbrew prefixes — plain runtime checks, no templating.
+- **`dot_zshrc`** and **`dot_gitconfig.tmpl`** need no OS branching: the 1Password SSH-agent block self-guards on a socket path that doesn't exist on Linux, and git signing falls back to `ssh-keygen` (via a forwarded 1Password agent on trusted dev boxes) when the macOS 1Password app isn't present.
+
+When adding a file, decide which profile(s) it belongs to: macOS-only → add it to the `.chezmoiignore` non-darwin block; cross-platform → leave it (it deploys everywhere); needs to differ → make it a `.tmpl` and branch on `.chezmoi.os`.
 
 ## Bootstrap (first-time setup)
 
+**macOS** (with [Homebrew](https://brew.sh) already installed):
+
 ```bash
-# macOS / Linux — installs chezmoi to ~/.local/bin then applies dotfiles
-sh -c "$(curl -fsLS https://get.chezmoi.io)" -- -b ~/.local/bin init --apply seanherron
+brew install chezmoi
+chezmoi init --apply seanherron
 ```
 
-The `-b ~/.local/bin` flag is required: without it the installer defaults to `~/bin`, which isn't on PATH until after the dotfiles are applied (chicken-and-egg).
+**Linux remote server** (chezmoi runs on the box; it bootstraps Homebrew-on-Linux itself on first apply):
+
+```bash
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply seanherron
+```
 
 ## Key commands
 
@@ -31,7 +54,7 @@ chezmoi edit ~/.zshrc
 chezmoi add ~/.somerc
 
 # Re-run the package install script (normally only runs when it changes)
-chezmoi run run_onchange_darwin-install-packages.sh.tmpl
+chezmoi run run_onchange_install-packages.sh.tmpl
 ```
 
 ## Structure
@@ -46,18 +69,18 @@ chezmoi run run_onchange_darwin-install-packages.sh.tmpl
 | `dot_config/lazygit/config.yml` | `~/.config/lazygit/config.yml` | lazygit Nord theme + delta as the pager |
 | `dot_config/btop/btop.conf` | `~/.config/btop/btop.conf` | btop Nord theme + defaults |
 | `dot_editorconfig` | `~/.editorconfig` | Global EditorConfig fallback |
-| `.chezmoidata/packages.yaml` | — | Data file: Homebrew brews/casks + Mac App Store apps to install |
-| `run_onchange_darwin-install-packages.sh.tmpl` | — | Script: runs `brew bundle` whenever `packages.yaml` changes |
+| `.chezmoidata/packages.yaml` | — | Data file: `brews` (cross-platform), `darwinBrews` (macOS-only), `casks` + `mas` (macOS-only) |
+| `run_onchange_install-packages.sh.tmpl` | — | Script: runs `brew bundle` whenever `packages.yaml` changes; branches macOS vs Linux |
 
 ## Template system
 
-`run_onchange_darwin-install-packages.sh.tmpl` is a Go template that reads from `.chezmoidata/packages.yaml`. To add a new Homebrew package, edit `packages.yaml` — the install script will re-run automatically on the next `chezmoi apply` because chezmoi hashes the rendered output to detect changes.
+`run_onchange_install-packages.sh.tmpl` is a Go template that reads from `.chezmoidata/packages.yaml`. To add a new Homebrew package, edit `packages.yaml`: put cross-platform CLI tools under `brews` (installed on both profiles), macOS-only formulae under `darwinBrews`, and GUI apps under `casks`. The install script re-runs automatically on the next `chezmoi apply` because chezmoi hashes the rendered output to detect changes.
 
 The `private_` prefix on `dot_config/cmux/private_cmux.json` tells chezmoi to set `chmod 600` on the destination file.
 
 ## Font convention
 
-The only font is **Berkeley Mono** (paid, installed via `run_onchange_install-berkeley-mono.sh.tmpl` which fetches the .otf files from a 1Password Document item named `Berkeley Mono` — the binary deliberately stays out of this public repo).
+The only font is **Berkeley Mono** (paid, installed via `run_onchange_install-berkeley-mono.sh` which fetches the .otf files from a 1Password Document item named `Berkeley Mono` — the binary deliberately stays out of this public repo).
 
 Nerd Font glyphs are **not used** anywhere in this setup. When adding a new dotfile for an editor or terminal that supports font configuration, use Berkeley Mono alone:
 

@@ -1,18 +1,20 @@
 # Login shell: PATH and environment (macOS Terminal/iTerm opens login shells)
+# Locate Homebrew across macOS (Apple Silicon / Intel) and Linux (linuxbrew).
 if [[ -x /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 elif [[ -x /usr/local/bin/brew ]]; then
   eval "$(/usr/local/bin/brew shellenv)"
 elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+elif [[ -x "$HOME/.linuxbrew/bin/brew" ]]; then
+  eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
 fi
 
-# User-local binaries (e.g. pipx, cargo install --root ~/.local, chezmoi native install)
-# ~/bin is included because some installers (e.g. the chezmoi bootstrap script) default to it.
-export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+# User-local binaries (e.g. pipx, cargo install --root ~/.local).
+export PATH="$HOME/.local/bin:$PATH"
 
-# Standardize XDG paths so tools that only respect the env var (lazygit on
-# macOS, btop on first run, etc.) land alongside everything else in ~/.config.
+# Standardize XDG paths so tools that only respect the env var (lazygit,
+# btop on first run, etc.) land alongside everything else in ~/.config.
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
@@ -22,8 +24,8 @@ export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME}/ripgrep/ripgreprc"
 
 # GNU coreutils / gnu-sed: prepend the gnubin dirs so `ls`, `date`, `sed` etc.
-# behave like Linux without the `g`-prefix dance. Falls through quietly when
-# Homebrew or these formulae aren't installed yet.
+# behave like the GNU versions without the `g`-prefix dance. Falls through
+# quietly when Homebrew or these formulae aren't installed yet.
 if command -v brew &>/dev/null; then
   for _gnu in coreutils gnu-sed; do
     _gnubin="$(brew --prefix 2>/dev/null)/opt/${_gnu}/libexec/gnubin"

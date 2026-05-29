@@ -13,7 +13,7 @@
     format = ssh
 
 [gpg "ssh"]
-{{- if and (eq .chezmoi.os "darwin") (stat "/Applications/1Password.app") }}
+{{- if stat "/Applications/1Password.app" }}
     program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
 {{- end }}
     allowedSignersFile = ~/.config/git/allowed_signers

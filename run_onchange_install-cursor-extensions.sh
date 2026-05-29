@@ -1,4 +1,3 @@
-{{ if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
 # Install Cursor extensions needed for Catppuccin Mocha.
 # Re-runs whenever the extension list below changes (chezmoi hashes this file).
@@ -22,5 +21,3 @@ extensions=(
 for ext in "${extensions[@]}"; do
   cursor --install-extension "$ext" --force
 done
-
-{{ end -}}
