@@ -1,0 +1,35 @@
+#!/bin/bash
+# Install xterm-ghostty terminfo so Ghostty works correctly over SSH.
+# Only needed on Linux — macOS picks it up from the Ghostty app bundle.
+{{ if ne .chezmoi.os "darwin" }}
+
+set -euo pipefail
+
+if infocmp xterm-ghostty &>/dev/null; then
+    exit 0
+fi
+
+# Pull the pre-compiled terminfo binary from the ghostty-terminfo-deb package.
+_deb_url="https://github.com/jamespo/ghostty-terminfo-deb/releases/download/debian/ghostty-terminfo-0.0.1-1-any.deb"
+_tmpdir="$(mktemp -d)"
+trap 'rm -rf "$_tmpdir"' EXIT
+
+if ! curl -fsSLo "$_tmpdir/ghostty-terminfo.deb" "$_deb_url" 2>/dev/null; then
+    echo "chezmoi: warning: could not download ghostty terminfo — skipping" >&2
+    exit 0
+fi
+
+if ! dpkg-deb -x "$_tmpdir/ghostty-terminfo.deb" "$_tmpdir/extract" 2>/dev/null; then
+    echo "chezmoi: warning: dpkg-deb failed — skipping ghostty terminfo install" >&2
+    exit 0
+fi
+
+_src="$_tmpdir/extract/usr/lib/terminfo/x/xterm-ghostty"
+if [[ -f "$_src" ]]; then
+    mkdir -p "$HOME/.terminfo/x"
+    cp "$_src" "$HOME/.terminfo/x/xterm-ghostty"
+else
+    echo "chezmoi: warning: xterm-ghostty not found in deb — skipping" >&2
+fi
+
+{{ end -}}

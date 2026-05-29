@@ -2,7 +2,7 @@
 
 # Two-line prompt: context on top, input on bottom
 format = """
-$directory$git_branch$git_status$nodejs$python$rust$golang$docker_context$cmd_duration
+$hostname$directory$git_branch$git_status$nodejs$python$rust$golang$docker_context$cmd_duration
 $character"""
 
 add_newline = true
@@ -51,6 +51,11 @@ style = "bold nord7"
 [docker_context]
 format = "via [$symbol$context]($style) "
 style = "bold nord10"
+
+[hostname]
+ssh_only = true
+format = "[$hostname]($style) "
+style = "bold nord9"
 
 [package]
 disabled = true
