@@ -3,7 +3,7 @@
 {{- $disabledMcpServers = onepasswordRead (printf "op://%s/Claude Code - Disabled MCP Servers/notesPlain" .onepasswordVault) -}}
 {{- end -}}
 {
-  "model": "sonnet",
+  "model": "opus",
   "effortLevel": "medium",
   "defaultMode": "auto",
   "disabledMcpServers": {{ $disabledMcpServers }}

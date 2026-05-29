@@ -7,9 +7,10 @@ Library
 # GUI terminal emulators / Mac apps.
 .config/ghostty
 .config/cmux
-# macOS-only one-shot scripts.
-run_onchange_install-berkeley-mono.sh
-run_onchange_install-cursor-extensions.sh
-run_onchange_install-vscode-extensions.sh
-run_onchange_macos-defaults.sh
+# macOS-only one-shot scripts. NB: .chezmoiignore matches the *target* name,
+# which for run_ scripts is the source name minus the run_onchange_ prefix.
+install-berkeley-mono.sh
+install-cursor-extensions.sh
+install-vscode-extensions.sh
+macos-defaults.sh
 {{ end }}
