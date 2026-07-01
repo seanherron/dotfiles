@@ -13,11 +13,11 @@ install-berkeley-mono.sh
 install-cursor-extensions.sh
 install-vscode-extensions.sh
 macos-defaults.sh
-# pam-u2f sudo hook is macOS-specific (edits /etc/pam.d/sudo_local).
-setup-pam-u2f-sudo.sh
+# sudo auth hook (Touch ID / security key) is macOS-specific — edits /etc/pam.d/sudo_local.
+setup-sudo-auth.sh
 {{ end }}
 {{ if ne .profile "work" }}
 # --- work-profile-only: never deploy on personal machines ------------------
-# Security-key (pam-u2f) sudo hook is a work-machine policy.
-setup-pam-u2f-sudo.sh
+# Security-key + Touch ID sudo hook is a work-machine policy.
+setup-sudo-auth.sh
 {{ end }}

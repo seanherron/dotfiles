@@ -37,8 +37,10 @@ packages:
   - 'gnu-sed'
   # Work-profile macOS brews. Installed only when profile == "work" (see
   # run_onchange_install-packages.sh.tmpl). Currently only wired into the darwin branch.
+  # Both feed /etc/pam.d/sudo_local (see run_onchange_setup-sudo-auth.sh.tmpl).
   workBrews:
-  - 'pam-u2f'   # security-key (FIDO2/U2F) auth for sudo via /etc/pam.d/sudo_local
+  - 'pam-u2f'      # security-key (FIDO2/U2F) auth for sudo
+  - 'pam-reattach' # lets Touch ID for sudo work inside tmux/zellij/cmux
   casks:
   - '1password-cli'
   - 'claude'

@@ -1,0 +1,52 @@
+#!/bin/bash
+# Configure /etc/pam.d/sudo_local with several OPTIONAL auth methods for sudo.
+# Any one is enough; if none is used, sudo falls back to your account password.
+#
+#   pam_reattach : makes Touch ID work inside tmux/zellij/cmux (must load first);
+#                  ignore_ssh skips it over SSH where there's no GUI session.
+#   pam_tid      : Touch ID — its prompt also offers a terminal password fallback.
+#   pam_u2f      : Thales security key (touch when cued).
+#
+# macOS Sonoma+ (incl. Tahoe/26) ships /etc/pam.d/sudo with `auth include
+# sudo_local`, and sudo_local survives OS updates — the sanctioned hook point.
+# All lines are optional/sufficient and the default password stack
+# (pam_opendirectory) still runs last, so there is NO lockout risk.
+#
+# Gated to work + darwin via .chezmoiignore. Register a key first with:
+#   pamu2fcfg -u "$USER" > ~/.config/Yubico/u2f_keys && chmod 600 ~/.config/Yubico/u2f_keys
+set -euo pipefail
+
+authfile="{{ .chezmoi.homeDir }}/.config/Yubico/u2f_keys"
+reattach="$(brew --prefix pam-reattach 2>/dev/null)/lib/pam/pam_reattach.so"
+u2f="$(brew --prefix pam-u2f 2>/dev/null)/lib/pam/pam_u2f.so"
+
+# Compose the auth lines in order. pam_tid (Touch ID) is a system module
+# referenced by bare name. The Homebrew modules are included only if present.
+lines=(
+  "# sudo_local — managed by chezmoi (run_onchange_setup-sudo-auth.sh.tmpl)."
+  "# Optional sudo auth: Touch ID, security key, or password (any one works)."
+)
+[[ -f "$reattach" ]] && lines+=("auth       optional       $reattach ignore_ssh")
+lines+=("auth       sufficient     pam_tid.so")
+[[ -f "$u2f" ]] && lines+=("auth       sufficient     $u2f authfile=$authfile cue")
+
+desired="$(printf '%s\n' "${lines[@]}")"
+
+# Idempotent: only touch the root-owned file (with sudo) when content differs.
+if [[ -f /etc/pam.d/sudo_local ]] && diff -q <(printf '%s\n' "$desired") /etc/pam.d/sudo_local >/dev/null 2>&1; then
+  echo "setup-sudo-auth: /etc/pam.d/sudo_local already current."
+  exit 0
+fi
+
+# Warn (don't fail) if the key line is present but unregistered — sudo_local is
+# still safe to install because pam_u2f just fails through to the next method.
+if [[ -f "$u2f" && ! -s "$authfile" ]]; then
+  echo "setup-sudo-auth: NOTE: $authfile is missing/empty."
+  echo "  Register your key: pamu2fcfg -u \"\$USER\" > \"$authfile\" && chmod 600 \"$authfile\""
+fi
+
+sudo -n true 2>/dev/null || sudo -v
+printf '%s\n' "$desired" | sudo tee /etc/pam.d/sudo_local >/dev/null
+sudo chown root:wheel /etc/pam.d/sudo_local
+sudo chmod 644 /etc/pam.d/sudo_local
+echo "setup-sudo-auth: wrote /etc/pam.d/sudo_local (Touch ID + security key + password)."
