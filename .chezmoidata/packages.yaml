@@ -35,8 +35,11 @@ packages:
   # Linux already ships GNU coreutils/sed, so these are darwin-only.
   - 'coreutils'
   - 'gnu-sed'
+  # Work-profile macOS brews. Installed only when profile == "work" (see
+  # run_onchange_install-packages.sh.tmpl). Currently only wired into the darwin branch.
+  workBrews:
+  - 'pam-u2f'   # security-key (FIDO2/U2F) auth for sudo via /etc/pam.d/sudo_local
   casks:
-  - '1password'
   - '1password-cli'
   - 'claude'
   - 'claude-code'
@@ -47,6 +50,11 @@ packages:
   - 'google-chrome'
   - 'cmux'
   - 'ghostty'
+  # Personal-profile casks: installed only when profile == "personal" (see
+  # run_onchange_install-packages.sh.tmpl). Work machines get 1Password from IT/MDM
+  # and it self-updates, so letting brew bundle manage it just causes upgrade churn.
+  personalCasks:
+  - '1password'
   # Mac App Store apps. Format: '<id>:<App Name>' — find an id with `mas search <name>`.
   # Empty by default; add entries like '497799835:Xcode'.
   mas: []

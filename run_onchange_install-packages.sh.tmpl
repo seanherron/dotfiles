@@ -25,8 +25,18 @@ brew {{ . | quote }}
 {{ range .packages.darwinBrews -}}
 brew {{ . | quote }}
 {{ end -}}
+{{ if eq .profile "work" -}}
+{{ range .packages.workBrews -}}
+brew {{ . | quote }}
+{{ end -}}
+{{ end -}}
 {{ range .packages.casks -}}
 cask {{ . | quote }}
+{{ end -}}
+{{ if eq .profile "personal" -}}
+{{ range .packages.personalCasks -}}
+cask {{ . | quote }}
+{{ end -}}
 {{ end -}}
 {{ range .packages.mas -}}
 {{- $parts := splitn ":" 2 . -}}
