@@ -1,6 +1,15 @@
 # Managed by chezmoi. The `private_` prefix on the dir and file enforce
 # 0700 / 0600 perms so ssh will actually load this without complaining.
 
+# IgnoreUnknown keeps older ssh / non-macOS hosts from erroring on the
+# directives below.
+IgnoreUnknown Include,UseKeychain
+{{- if ne .profile "personal" }}
+# Work machines only: drop-in host configs live in ~/.ssh/devbox/ (kept out
+# of this repo). A glob that matches nothing is silently ignored.
+Include {{ .chezmoi.homeDir }}/.ssh/devbox/*
+{{- end }}
+
 {{- $opAgentSock := joinPath .chezmoi.homeDir "Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" }}
 
 Host *
