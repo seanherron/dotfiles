@@ -15,6 +15,9 @@ install-vscode-extensions.sh
 macos-defaults.sh
 # sudo auth hook (Touch ID / security key) is macOS-specific — edits /etc/pam.d/sudo_local.
 setup-sudo-auth.sh
+# Single-prompt sudo for `chezmoi apply`: one upfront `sudo -v`. macOS-only —
+# Linux remotes install no casks and touch no sudo.
+authenticate-sudo.sh
 {{ end }}
 {{ if ne .profile "work" }}
 # --- work-profile-only: never deploy on personal machines ------------------

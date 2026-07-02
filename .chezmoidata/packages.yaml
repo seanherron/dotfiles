@@ -42,22 +42,26 @@ packages:
   - 'pam-u2f'      # security-key (FIDO2/U2F) auth for sudo
   - 'pam-reattach' # lets Touch ID for sudo work inside tmux/zellij/cmux
   casks:
-  - '1password-cli'
-  - 'claude'
-  - 'claude-code'
-  - 'chatgpt'
-  - 'codex'
-  - 'codex-app'
-  - 'cursor'
-  - 'visual-studio-code'
-  - 'google-chrome'
-  - 'cmux'
-  - 'ghostty'
+  - '1password-cli'  # CLI binary (op) — no root app, no sudo
+  - 'claude-code'    # CLI binary
+  - 'codex'          # CLI binary
+  - 'cmux'           # app, installs user-owned
+  - 'ghostty'        # app, installs user-owned
   # Personal-profile casks: installed only when profile == "personal" (see
-  # run_onchange_install-packages.sh.tmpl). Work machines get 1Password from IT/MDM
-  # and it self-updates, so letting brew bundle manage it just causes upgrade churn.
+  # run_onchange_install-packages.sh.tmpl). These are GUI apps that on a work
+  # machine come from IT/MDM (they land root-owned in /Applications) and all
+  # self-update, so letting brew bundle manage them just causes upgrade churn —
+  # and every upgrade of a root-owned app needs sudo, which is what made
+  # `chezmoi apply` prompt for a password repeatedly. Gating them to personal
+  # keeps brew authoritative at home while leaving MDM's copies untouched at work.
   personalCasks:
   - '1password'
+  - 'google-chrome'
+  - 'visual-studio-code'
+  - 'cursor'
+  - 'claude'          # Claude.app (desktop); the claude-code CLI stays cross-profile above
+  - 'chatgpt'
+  - 'codex-app'       # Codex.app (desktop); the codex CLI stays cross-profile above
   # Mac App Store apps. Format: '<id>:<App Name>' — find an id with `mas search <name>`.
   # Empty by default; add entries like '497799835:Xcode'.
   mas: []
