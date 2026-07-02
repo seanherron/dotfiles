@@ -47,6 +47,7 @@ packages:
   - 'claude-code'
   - 'chatgpt'
   - 'codex'
+  - 'codex-app'
   - 'cursor'
   - 'visual-studio-code'
   - 'google-chrome'
