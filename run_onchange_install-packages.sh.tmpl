@@ -3,8 +3,13 @@ set -euo pipefail
 
 {{ if eq .chezmoi.os "darwin" -}}
 # --- macOS: Homebrew + casks + Mac App Store -------------------------------
-# brew bundle installs casks one-by-one; each may invoke sudo. Authenticate once
-# and refresh the credential cache until this script exits.
+{{ if eq .profile "personal" -}}
+# On personal machines the GUI apps (personalCasks) install into /Applications
+# and may invoke sudo; authenticate once up front and refresh the credential
+# cache until this script exits. Work machines get those apps from IT/MDM (gated
+# out of the bundle below) so brew needs no sudo there — skip this to avoid an
+# extra password prompt. Sudo tickets are NOT shared across chezmoi's separate
+# script processes, so each script that needs sudo must prime its own.
 if ! sudo -n true 2>/dev/null; then
   sudo -v
 fi
@@ -17,6 +22,7 @@ script_pid=$$
 ) &
 sudo_keepalive_pid=$!
 trap 'kill "$sudo_keepalive_pid" 2>/dev/null || true' EXIT
+{{ end -}}
 
 brew bundle --file=/dev/stdin <<EOF
 {{ range .packages.brews -}}
