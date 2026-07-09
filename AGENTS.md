@@ -16,7 +16,7 @@ chezmoi maps files with `dot_` prefixes to their `~/.` equivalents (e.g. `dot_zs
 The split is driven entirely by `{{ "{{" }} .chezmoi.os {{ "}}" }}` (`"darwin"` vs `"linux"`):
 
 - **`.chezmoiignore`** is a template. On non-darwin it ignores the macOS-only artifacts (`Library` editor settings, `.config/ghostty`, `.config/cmux`, the font/extension installers, and `run_onchange_macos-defaults.sh`), so they never deploy to Linux.
-- **`run_onchange_install-packages.sh.tmpl`** branches on OS: macOS installs `brews` + `darwinBrews` + `casks` + `mas` (with a sudo keep-alive for casks); Linux bootstraps Homebrew-on-Linux if missing, then installs the cross-platform `brews` only.
+- **`run_onchange_install-packages.sh.tmpl`** branches on OS: macOS installs `brews` + `darwinBrews` + `casks` + `mas` (with a sudo keep-alive for casks), then installs `darwinNpmGlobals` via npm; Linux bootstraps Homebrew-on-Linux if missing, then installs the cross-platform `brews` only.
 - **`private_dot_ssh/private_config.tmpl`** gates the Apple-only `UseKeychain` directive behind darwin (it errors out on Linux ssh).
 - **`dot_zprofile`** locates Homebrew across Apple Silicon, Intel, and linuxbrew prefixes — plain runtime checks, no templating.
 - **`dot_zshrc`** and **`dot_gitconfig.tmpl`** need no OS branching: the 1Password SSH-agent block self-guards on a socket path that doesn't exist on Linux, and git signing falls back to `ssh-keygen` (via a forwarded 1Password agent on trusted dev boxes) when the macOS 1Password app isn't present.
@@ -69,12 +69,12 @@ chezmoi run run_onchange_install-packages.sh.tmpl
 | `dot_config/lazygit/config.yml` | `~/.config/lazygit/config.yml` | lazygit Nord theme + delta as the pager |
 | `dot_config/btop/btop.conf` | `~/.config/btop/btop.conf` | btop Nord theme + defaults |
 | `dot_editorconfig` | `~/.editorconfig` | Global EditorConfig fallback |
-| `.chezmoidata/packages.yaml` | — | Data file: `brews` (cross-platform), `darwinBrews` (macOS-only), `casks` + `mas` (macOS-only) |
-| `run_onchange_install-packages.sh.tmpl` | — | Script: runs `brew bundle` whenever `packages.yaml` changes; branches macOS vs Linux |
+| `.chezmoidata/packages.yaml` | — | Data file: `brews` (cross-platform), `darwinBrews` + `darwinNpmGlobals` (macOS-only), `casks` + `mas` (macOS-only) |
+| `run_onchange_install-packages.sh.tmpl` | — | Script: runs `brew bundle` and macOS npm global installs whenever `packages.yaml` changes; branches macOS vs Linux |
 
 ## Template system
 
-`run_onchange_install-packages.sh.tmpl` is a Go template that reads from `.chezmoidata/packages.yaml`. To add a new Homebrew package, edit `packages.yaml`: put cross-platform CLI tools under `brews` (installed on both profiles), macOS-only formulae under `darwinBrews`, and GUI apps under `casks`. The install script re-runs automatically on the next `chezmoi apply` because chezmoi hashes the rendered output to detect changes.
+`run_onchange_install-packages.sh.tmpl` is a Go template that reads from `.chezmoidata/packages.yaml`. To add a new package, edit `packages.yaml`: put cross-platform Homebrew CLI tools under `brews` (installed on both profiles), macOS-only npm-installed global CLIs under `darwinNpmGlobals`, macOS-only formulae under `darwinBrews`, and GUI apps under `casks`. The install script re-runs automatically on the next `chezmoi apply` because chezmoi hashes the rendered output to detect changes.
 
 The `private_` prefix on `dot_config/cmux/private_cmux.json` tells chezmoi to set `chmod 600` on the destination file.
 

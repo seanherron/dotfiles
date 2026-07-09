@@ -31,10 +31,14 @@ packages:
   # macOS-only brews. Installed on darwin only (see run_onchange_install-packages.sh.tmpl).
   darwinBrews:
   - 'mas'       # Mac App Store CLI (consumed by `mas` section below)
+  - 'node'      # provides npm for darwinNpmGlobals
   # GNU tools on macOS (PATH set in dot_zprofile to make them unprefixed).
   # Linux already ships GNU coreutils/sed, so these are darwin-only.
   - 'coreutils'
   - 'gnu-sed'
+  # macOS-only npm global packages. Installed after Homebrew has provided npm.
+  darwinNpmGlobals:
+  - '@openai/codex' # Codex CLI
   # Work-profile macOS brews. Installed only when profile == "work" (see
   # run_onchange_install-packages.sh.tmpl). Currently only wired into the darwin branch.
   # Both feed /etc/pam.d/sudo_local (see run_onchange_setup-sudo-auth.sh.tmpl).
@@ -44,7 +48,6 @@ packages:
   casks:
   - '1password-cli'  # CLI binary (op) — no root app, no sudo
   - 'claude-code'    # CLI binary
-  - 'codex'          # CLI binary
   - 'cmux'           # app, installs user-owned
   - 'ghostty'        # app, installs user-owned
   # Personal-profile casks: installed only when profile == "personal" (see
@@ -61,7 +64,7 @@ packages:
   - 'cursor'
   - 'claude'          # Claude.app (desktop); the claude-code CLI stays cross-profile above
   - 'chatgpt'
-  - 'codex-app'       # Codex.app (desktop); the codex CLI stays cross-profile above
+  - 'codex-app'       # Codex.app (desktop); the codex CLI is installed via darwinNpmGlobals above
   # Mac App Store apps. Format: '<id>:<App Name>' — find an id with `mas search <name>`.
   # Empty by default; add entries like '497799835:Xcode'.
   mas: []

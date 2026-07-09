@@ -42,7 +42,7 @@ Everything is driven off `chezmoi.os` (`darwin` vs `linux`), so the same `chezmo
 | Concern | macOS | Linux |
 | ------- | ----- | ----- |
 | Package manager | Homebrew (preinstalled) | Homebrew-on-Linux, bootstrapped on first apply |
-| Packages | `brews` + `darwinBrews` + `casks` + `mas` | `brews` only (cross-platform CLI tools) |
+| Packages | `brews` + `darwinBrews` + `darwinNpmGlobals` + `casks` + `mas` | `brews` only (cross-platform CLI tools) |
 | GUI configs (VSCode/Cursor, Ghostty, cmux) | deployed | ignored |
 | Fonts, macOS defaults, editor-extension installers | run | ignored |
 | `UseKeychain` in `~/.ssh/config` | set | omitted (Apple-only; errors on Linux) |
@@ -71,9 +71,9 @@ The macOS-only files are excluded on Linux by a templated `.chezmoiignore`. File
 | `Library/Application Support/Code/User/settings.json` | same path under `~`                                    | VSCode — Claude Code panel layout, Catppuccin, format-on-save                   |
 | `Library/Application Support/Code/User/keybindings.json` | same path under `~`                                 | VSCode — `cmd+j` editor ↔ Claude panel ping-pong                                |
 | `Library/Application Support/Cursor/...`              | same paths under `~`                                   | Cursor — same settings/keybindings minus the Claude Code extension binding      |
-| `.chezmoidata/packages.yaml`                          | —                                                      | `brews` (both OSes) + `darwinBrews` + `casks` + `mas` (macOS-only)              |
+| `.chezmoidata/packages.yaml`                          | —                                                      | `brews` (both OSes) + `darwinBrews` + `darwinNpmGlobals` + `casks` + `mas` (macOS-only) |
 | `.chezmoi.toml.tmpl`                                  | rendered once into `~/.config/chezmoi/chezmoi.toml`    | The init prompts above                                                          |
-| `run_onchange_install-packages.sh.tmpl`               | runs on `chezmoi apply` when its hash changes          | `brew bundle` from `packages.yaml`                                              |
+| `run_onchange_install-packages.sh.tmpl`               | runs on `chezmoi apply` when its hash changes          | `brew bundle` plus macOS npm global installs from `packages.yaml`               |
 | `run_onchange_install-vscode-extensions.sh`           | same                                                   | Installs Claude Code, 1Password, EditorConfig extensions                        |
 | `run_onchange_install-cursor-extensions.sh`           | same                                                   | Same set for Cursor                                                             |
 | `run_onchange_install-berkeley-mono.sh`               | same                                                   | Fetches Berkeley Mono from a 1Password Document and installs to `~/Library/Fonts/` |
@@ -359,7 +359,7 @@ chezmoi apply
 
 Same idea for Cursor: install the `cursor` shell command first, then clear state.
 
-### I changed `packages.yaml` but `brew bundle` didn't re-run
+### I changed `packages.yaml` but package installs didn't re-run
 
 The chezmoi hash includes `packages.yaml`'s rendered output via the template's `range`, so editing the file should re-trigger the script automatically. If it doesn't (e.g. you reverted and then changed again to the same content), force it:
 

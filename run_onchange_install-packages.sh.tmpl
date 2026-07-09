@@ -2,6 +2,26 @@
 set -euo pipefail
 
 {{ if eq .chezmoi.os "darwin" -}}
+install_darwin_npm_globals() {
+  if ! command -v npm &>/dev/null; then
+    echo "npm is required to install npm global packages" >&2
+    exit 1
+  fi
+
+  npm_packages=(
+{{ range .packages.darwinNpmGlobals }}    {{ . | quote }}
+{{ end }}  )
+
+  ((${#npm_packages[@]})) || return 0
+  npm install -g "${npm_packages[@]}" --no-fund
+}
+
+uninstall_legacy_codex_cask() {
+  if brew list --cask codex &>/dev/null; then
+    brew uninstall --cask codex
+  fi
+}
+
 # --- macOS: Homebrew + casks + Mac App Store -------------------------------
 {{ if eq .profile "personal" -}}
 # On personal machines the GUI apps (personalCasks) install into /Applications
@@ -23,6 +43,8 @@ script_pid=$$
 sudo_keepalive_pid=$!
 trap 'kill "$sudo_keepalive_pid" 2>/dev/null || true' EXIT
 {{ end -}}
+
+uninstall_legacy_codex_cask
 
 brew bundle --file=/dev/stdin <<EOF
 {{ range .packages.brews -}}
@@ -49,6 +71,8 @@ cask {{ . | quote }}
 mas {{ index $parts "_1" | quote }}, id: {{ index $parts "_0" }}
 {{ end -}}
 EOF
+
+install_darwin_npm_globals
 {{- else -}}
 # --- Linux: Homebrew on Linux, cross-platform CLI brews only ---------------
 # Bootstrap Homebrew if it isn't on PATH yet (no sudo needed for brew itself
