@@ -74,6 +74,7 @@ The macOS-only files are excluded on Linux by a templated `.chezmoiignore`. File
 | `.chezmoidata/packages.yaml`                          | —                                                      | `brews` (both OSes) + `darwinBrews` + `darwinNpmGlobals` + `casks` + `mas` (macOS-only) |
 | `.chezmoi.toml.tmpl`                                  | rendered once into `~/.config/chezmoi/chezmoi.toml`    | The init prompts above                                                          |
 | `run_onchange_install-packages.sh.tmpl`               | runs on `chezmoi apply` when its hash changes          | `brew bundle` plus macOS npm global installs from `packages.yaml`               |
+| `run_onchange_after_apply-codex-settings.sh`          | updates `~/.codex/config.toml` and `keybindings.json`  | Upserts portable Codex preferences without replacing local projects/integrations |
 | `run_onchange_install-vscode-extensions.sh`           | same                                                   | Installs Claude Code, 1Password, EditorConfig extensions                        |
 | `run_onchange_install-cursor-extensions.sh`           | same                                                   | Same set for Cursor                                                             |
 | `run_onchange_install-berkeley-mono.sh`               | same                                                   | Fetches Berkeley Mono from a 1Password Document and installs to `~/Library/Fonts/` |
@@ -96,6 +97,22 @@ chezmoi cd                         # drop into this repo's working dir
 
 - **Theme**: Catppuccin Mocha everywhere. Prefer a built-in theme name (e.g. Ghostty's `Catppuccin Mocha`, bat's `Catppuccin Mocha`). The hex palette lives once in `dot_config/starship.toml` under `[palettes.catppuccin_mocha]`.
 - **Font**: Berkeley Mono primary, JetBrainsMono Nerd Font fallback. Always declare both in font-family strings — Berkeley Mono ships without Nerd Font glyphs, so Starship/eza icons need the fallback for per-character resolution. See `CLAUDE.md` for the exact pattern in each editor/terminal.
+
+## Codex / ChatGPT settings
+
+`run_onchange_after_apply-codex-settings.sh` owns the portable preferences in
+`~/.codex/config.toml`: model, reasoning effort, approvals, sandbox, personality,
+desktop defaults, bundled-plugin enablement, and Codex local-memory enablement.
+It performs targeted upserts, leaving the app-managed portions of `config.toml`
+alone (projects, app-provided MCP paths, marketplace state, and other machine
+configuration). It also upserts the global-dictation keybinding while preserving
+any other local keybindings.
+
+ChatGPT's own Memory setting is account-level (ChatGPT → Settings →
+Personalization), so it follows the signed-in account rather than a local file.
+Do not add `~/.codex/auth.json`, the ChatGPT app-support cache, conversation
+stores, or `~/.codex/.codex-global-state.json` to this repository: they contain
+authentication, conversations, or machine-specific UI and project state.
 
 ## CLI utilities
 
